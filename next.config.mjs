@@ -3,6 +3,9 @@ import createNextIntlPlugin from 'next-intl/plugin'
 
 /** @type {import('next').NextConfig} */
 const baseConfig = {
+  images: {
+    unoptimized: true, // disable Next.js image optimization globally
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
