@@ -17,8 +17,37 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
-export default function SigninForm() {
+interface LocalStorageCartItem {
+  planId: string
+  quantity: number
+  addedAt: string
+  plan: {
+    id: string
+    title: string
+    price: number
+    priceBeforeDiscount?: number
+    description: string
+    numberOfSubscriptions?: number
+    image?: {
+      id: string
+      url: string
+      alt: string
+      filename: string
+      width: number
+      height: number
+      mimeType: string
+    } | null
+    features?: any[]
+    downloadPlatforms?: any[]
+    reviews?: any[]
+    createdAt?: string
+    updatedAt?: string
+  }
+}
+
+export default function SigninForm({ isCart }: { isCart?: boolean }) {
   const router = useRouter()
   const t = useTranslations()
 
@@ -38,6 +67,59 @@ export default function SigninForm() {
 
   const [submitting, setSubmitting] = React.useState(false)
 
+  // Function to transfer localStorage cart to backend
+  const transferGuestCartToBackend = async (): Promise<boolean> => {
+    try {
+      const guestCart = localStorage.getItem('guestCart')
+      if (!guestCart) {
+        return true // No guest cart to transfer
+      }
+
+      const guestCartItems: LocalStorageCartItem[] = JSON.parse(guestCart)
+      if (guestCartItems.length === 0) {
+        return true // Empty guest cart
+      }
+
+ 
+      // Add each item from localStorage to the backend cart
+      const transferPromises = guestCartItems.map(async (item) => {
+        const response = await fetch('/api/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            planId: item.planId,
+            quantity: item.quantity,
+          }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          console.error(`Failed to transfer item ${item.planId}:`, errorData)
+          throw new Error(`Failed to transfer item: ${item.plan.title}`)
+        }
+
+        return response.json()
+      })
+
+      // Wait for all transfers to complete
+      await Promise.all(transferPromises)
+
+      // Clear localStorage cart after successful transfer
+      localStorage.removeItem('guestCart')
+
+      // Dispatch event to update other components
+      window.dispatchEvent(new CustomEvent('guestCartUpdated'))
+
+      toast.success(`Transferred ${guestCartItems.length} item(s) to your account!`)
+      return true
+    } catch (error) {
+      console.error('Error transferring guest cart:', error)
+      toast.error('Failed to transfer some cart items. Please add them manually.')
+      return false // Don't fail the entire login process
+    }
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true)
 
@@ -56,6 +138,16 @@ export default function SigninForm() {
       }
 
       toast.success('Login successful!')
+
+      // Transfer guest cart items to backend after successful login
+      await transferGuestCartToBackend()
+
+      // Small delay to ensure cart transfer completes
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      if (isCart) {
+        return router.refresh()
+      }
       router.push('/')
       router.refresh() // Refresh to update auth state
     } catch (err) {
@@ -67,10 +159,14 @@ export default function SigninForm() {
   }
 
   return (
-    <section className="bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white w-full">
-      <div className="h-auto my-auto flex flex-col gap-5 sm:gap-10">
-        <h1 className="font-bold text-3xl lg:text-5xl">{t('signin') || 'Sign In'}</h1>
-
+    <section
+      className={cn(
+        'bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white ',
+        isCart ? 'w-fit min-w-96 max-w-full ' : 'w-full',
+      )}
+    >
+      <div className={cn('h-auto my-auto flexgap-5 sm:gap-10', isCart ? '' : ' flex-col ')}>
+        {!isCart && <h1 className="font-bold text-3xl lg:text-5xl">{t('signin') || 'Sign In'}</h1>}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField

@@ -30,7 +30,7 @@ export default function SubscriptionSteps() {
     },
   ]
   return (
-    <section className="container mx-auto px-4">
+    <section className="container mx-auto px-4 hidden md:block">
       <SectionHeader sectionHeader={t('subscriptionsSteps')} />
       <div className="hidden md:block">
         <ul className="flex justify-between items-center flex-wrap gap-4">

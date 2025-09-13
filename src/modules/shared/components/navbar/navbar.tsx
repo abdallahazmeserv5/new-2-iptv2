@@ -24,7 +24,7 @@ export default function Navbar({ settings, user }: Props) {
         </div>
         <ActionButtons user={user} />
         {/* mobile screen */}
-        <MobileMenu />
+        <MobileMenu user={user} />
       </header>
     </div>
   )

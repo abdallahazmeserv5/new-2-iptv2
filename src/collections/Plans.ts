@@ -203,5 +203,11 @@ export const Plans: CollectionConfig = {
         },
       ],
     },
+
+    {
+      name: 'duration',
+      type: 'number',
+      required: true,
+    },
   ],
 }

@@ -45,7 +45,7 @@ export default function Packages({ packages }: HeroProps) {
   }, [api])
 
   return (
-    <section className="container mx-auto px-4">
+    <section className="container mx-auto px-4  hidden md:block">
       <SectionHeader sectionHeader={t('avilablePackages')} />
 
       <Carousel

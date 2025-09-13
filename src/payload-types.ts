@@ -236,6 +236,7 @@ export interface Plan {
     platformImage: string | Media;
     id?: string | null;
   }[];
+  duration: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -525,6 +526,7 @@ export interface PlansSelect<T extends boolean = true> {
         platformImage?: T;
         id?: T;
       };
+  duration?: T;
   updatedAt?: T;
   createdAt?: T;
 }

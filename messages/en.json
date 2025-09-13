@@ -63,5 +63,7 @@
   "orderDetails": "Order Details",
   "orderId": "Order Id",
   "status": "Status",
-  "totalPrice": "Total Price"
+  "totalPrice": "Total Price",
+  "monthes": "Monthes",
+  "goToCart": "Go to cart"
 }

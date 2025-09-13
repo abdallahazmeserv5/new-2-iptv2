@@ -9,6 +9,7 @@ import TestimonialSection from '@/modules/home/components/testimonial-section'
 
 export default async function HomePage() {
   const payload = await configuredPayload()
+
   const [heroSection, packages, plans, testimonial, banners, faqs] = await Promise.all([
     payload.find({
       collection: 'hero-slides',

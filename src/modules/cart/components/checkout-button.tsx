@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import PrimaryButton from '@/modules/shared/components/primary-button'
 
-export default function CheckoutButton() {
+export default function CheckoutButton({ user }: { user: any }) {
   const t = useTranslations()
   const [loading, setLoading] = useState(false)
 

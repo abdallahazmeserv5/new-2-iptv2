@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const SIGNIN_ROUTES = ['/signin', '/signup']
-const USER_ROUTES = ['/cart']
+const USER_ROUTES = []
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -27,5 +27,5 @@ export function middleware(req: NextRequest) {
 
 // Run middleware only on specific pages
 export const config = {
-  matcher: ['/cart', '/signin', '/signup'],
+  matcher: ['/signin', '/signup'],
 }
