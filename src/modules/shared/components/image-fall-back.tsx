@@ -1,10 +1,8 @@
-import Image from 'next/image'
+import Image, { ImageProps } from 'next/image'
 
-interface ImageFallBackProps {
-  src?: string
-  alt?: string
+interface ImageFallBackProps extends ImageProps {
   fallbackSrc?: string
-  [key: string]: any
+  src: string
 }
 
 export default function ImageFallBack({
@@ -13,17 +11,5 @@ export default function ImageFallBack({
   fallbackSrc,
   ...rest
 }: ImageFallBackProps) {
-  // Ensure the src is an absolute URL in production
-  const resolvedSrc = src.startsWith('http')
-    ? src
-    : `${process.env.NEXT_PUBLIC_APP_URL || ''}${src}`
-
-  return (
-    <Image
-      src={resolvedSrc || fallbackSrc || '/default.png'}
-      alt={alt}
-      unoptimized // disables Next.js optimization to avoid fetch errors
-      {...rest}
-    />
-  )
+  return <img src={src || fallbackSrc || '/default.png'} unoptimized={true} alt={alt} {...rest} />
 }
