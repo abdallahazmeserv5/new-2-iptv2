@@ -1,0 +1,124 @@
+import { Separator } from '@/components/ui/separator'
+import { Media, Setting } from '@/payload-types'
+import { getTranslations } from 'next-intl/server'
+import Link from 'next/link'
+import React from 'react'
+import ImageFallBack from './image-fall-back'
+
+interface Props {
+  settings: Setting
+}
+
+export default async function Footer({ settings }: Props) {
+  const t = await getTranslations()
+  const socialMedia = settings.socialMedia || []
+  const mainNav = [
+    {
+      label: t('packages'),
+      link: '/#packages',
+    },
+    {
+      label: t('plans'),
+      link: '/#plans',
+    },
+    {
+      label: t('offers'),
+      link: '/#offers',
+    },
+    {
+      label: t('faq'),
+      link: '/#faq',
+    },
+  ]
+
+  return (
+    <footer className="bg-black mb-16 lg:mb-0 mt-10">
+      <div className=" container mx-auto px-4 pt-10">
+        {/* first part */}
+        <div className="container mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-4 my-5">
+          {/* first col */}
+          <div className="">
+            <h3 className="text-primary font-semibold text-lg">{t('homePage')}</h3>
+            <ul className="flex flex-col gap-[14px] mt-8">
+              {mainNav.map((item, index) => (
+                <li key={`${item.link}-${index}`} className="text-[#999999] hover:text-white">
+                  <Link href={item.link}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="">
+            <h3 className="text-primary font-semibold text-lg">{t('homePage')}</h3>
+            <ul className="flex flex-col gap-[14px] mt-8">
+              {mainNav.map((item) => (
+                <li className="text-[#999999] hover:text-white ">
+                  <Link href={item.link}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="">
+            <h3 className="text-primary font-semibold text-lg">{t('homePage')}</h3>
+            <ul className="flex flex-col gap-[14px] mt-8">
+              {mainNav.map((item) => (
+                <li className="text-[#999999] hover:text-white ">
+                  <Link href={item.link}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* fourth col */}
+          <div className="">
+            <h3 className="text-primary font-semibold text-lg">{t('socialMedia')}</h3>
+            <ul className="flex gap-[14px] mt-8 ">
+              {socialMedia.map((item, index) => {
+                const image = item.socialMediaImage as Media
+                return (
+                  <li key={item.id} className="text-[#999999] hover:text-white">
+                    <Link
+                      href={item.socialMediaLink || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <ImageFallBack
+                        width={6}
+                        height={6}
+                        src={image.url || '#'}
+                        alt={image.alt || 'social icon'}
+                        className="w-6 h-6 object-contain"
+                      />
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        </div>
+        <Separator className="bg-[#262626] w-full" />
+        {/* last part */}
+        <div className="py-10 flex items-center">
+          <div className="flex gap-5">
+            <Link
+              href={'/terms-condtions'}
+              className="text-[#999999] hover:text-white transition-all transform duration-300"
+            >
+              {t('termsCondtions')}
+            </Link>
+            <Link
+              href={'/privacy'}
+              className="text-[#999999] hover:text-white transition-all transform duration-300"
+            >
+              {t('privacy')}
+            </Link>
+          </div>
+          <Link
+            href={'#'}
+            className="text-[#999999] hover:text-white transition-all transform duration-300 inline-block ms-auto "
+          >
+            @2025 name, All Rights Reserved
+          </Link>
+        </div>
+      </div>
+    </footer>
+  )
+}
