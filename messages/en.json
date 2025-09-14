@@ -65,5 +65,15 @@
   "status": "Status",
   "totalPrice": "Total Price",
   "monthes": "Monthes",
-  "goToCart": "Go to cart"
+  "goToCart": "Go to cart",
+  "logOut": "Log out",
+  "loading": "Loading...",
+  "faildToCreateOrder": "Faild to create an order, try again",
+  "cartEmpty": "Cart Empty add products",
+  "loadingCart": "Loading cart",
+  "cartIsEmpty": "Cart is empty",
+  "yourCart": "Your cart",
+  "createingAccount": "Creating an account",
+  "phone": "Phone number",
+  "welcomeAtTornado": "Welcome at tornado IPTV, your email is: {email} and your password is: {password}"
 }

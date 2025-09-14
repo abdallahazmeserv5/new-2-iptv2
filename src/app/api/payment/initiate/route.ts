@@ -16,7 +16,6 @@ export async function POST(req: Request) {
     }
 
     const user = await userRes.json()
-
     // 2. Get cart for this user
     const cartRes = await fetch(
       `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/carts?where[user][equals]=${user?.user?.id}`,
@@ -43,7 +42,9 @@ export async function POST(req: Request) {
     let total = 0
     const items = cart.items.map((item: any) => {
       const plan = item.plan as Plan
+
       const price = plan?.price || 0
+
       total += price * item.quantity
       return {
         plan: plan.id,

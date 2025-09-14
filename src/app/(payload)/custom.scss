@@ -1,0 +1,9 @@
+/* this style to intergrate tailwind with admin panel */
+/* we cannot just use the normal import for tailwind beacasue it gonna use preflight which gonna override some payload default values */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* since payload using different way to style than tailwind */
+/* it doesnt recognize the dark mode so this line nessary to make it catch up with dark mode in admin panel */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));

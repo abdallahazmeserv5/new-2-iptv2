@@ -20,6 +20,8 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 import ImageFallBack from '@/modules/shared/components/image-fall-back'
+import { useRouter } from 'next/navigation'
+import { baseFetch } from '@/actions/fetch'
 
 interface HeroProps {
   plans: PaginatedDocs<Plan>
@@ -28,6 +30,7 @@ interface HeroProps {
 export default function Plans({ plans }: HeroProps) {
   const lang = useLocale()
   const queryClient = useQueryClient()
+  const router = useRouter()
 
   // Check if user is authenticated
   const checkUserAuth = async (): Promise<boolean> => {
@@ -51,32 +54,28 @@ export default function Plans({ plans }: HeroProps) {
   // Add to cart for authenticated users
   const addToCartAuth = async (planId: string) => {
     try {
-      const res = await fetch('/api/cart/add', {
+      const data = await baseFetch({
+        url: '/api/cart/add',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ planId, quantity: 1 }),
+        body: { planId, quantity: 1 },
       })
-      const data = await res.json()
 
-      if (!res.ok) {
+      if (!data || data?.error) {
         toast.error(data?.error || 'Could not add to cart')
         return
       }
 
-      queryClient.refetchQueries({
-        queryKey: ['cart', lang],
-      })
+      // ✅ Refetch cart so UI updates
+      queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
       toast.success(
         <div>
-          {t('goToCart')}
           <Link href="/cart" className="text-white underline">
-            {t('cart')}
+            {t('goToCart')}
           </Link>
         </div>,
         {
-          duration: Infinity, // toast will not disappear automatically
+          duration: Infinity, // keeps toast visible
         },
       )
     } catch (err) {
@@ -153,6 +152,7 @@ export default function Plans({ plans }: HeroProps) {
     } else {
       addToLocalStorage(planId)
     }
+    router.push('/cart')
   }
 
   const t = useTranslations('')

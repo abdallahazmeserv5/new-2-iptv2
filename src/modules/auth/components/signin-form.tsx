@@ -80,7 +80,6 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
         return true // Empty guest cart
       }
 
- 
       // Add each item from localStorage to the backend cart
       const transferPromises = guestCartItems.map(async (item) => {
         const response = await fetch('/api/cart/add', {
@@ -165,7 +164,7 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
         isCart ? 'w-fit min-w-96 max-w-full ' : 'w-full',
       )}
     >
-      <div className={cn('h-auto my-auto flexgap-5 sm:gap-10', isCart ? '' : ' flex-col ')}>
+      <div className={cn('h-auto my-auto flex gap-5 sm:gap-10', isCart ? '' : ' flex-col ')}>
         {!isCart && <h1 className="font-bold text-3xl lg:text-5xl">{t('signin') || 'Sign In'}</h1>}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

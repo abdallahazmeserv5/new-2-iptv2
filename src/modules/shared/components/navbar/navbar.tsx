@@ -15,7 +15,7 @@ interface Props {
 
 export default function Navbar({ settings, user }: Props) {
   return (
-    <div className="bg-background py-5">
+    <div className="bg-background ">
       <header className="container mx-auto px-4 flex items-center justify-between">
         <Logo logo={settings.logo as Media} />
         {/* lg screen and above */}

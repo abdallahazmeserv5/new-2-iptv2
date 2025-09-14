@@ -1,57 +1,46 @@
-import { cookies } from 'next/headers'
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
 import CartItems from './cart-items'
 import CheckoutButton from './checkout-button'
 import SigninForm from '@/modules/auth/components/signin-form'
+import { baseFetch } from '@/actions/fetch'
+import { useLocale, useTranslations } from 'next-intl'
 
-export default async function CartDetails() {
-  const cookieStore = await cookies()
-  const payloadToken = cookieStore.get('payload-token')?.value
+// 👇 add type for the prop
+type CartDetailsProps = {
+  user: {
+    id: string
+    email?: string
+    [key: string]: any
+  } | null
+}
 
-  let cartItems = []
-  let cartId = null
-  let user = null
+export default function CartDetails({ user }: CartDetailsProps) {
+  const lang = useLocale()
+  const t = useTranslations()
 
-  // Check if user is authenticated by fetching /me endpoint
-  if (payloadToken) {
-    try {
-      // First, check if user is authenticated
-      const userRes = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/users/me`, {
-        headers: {
-          Cookie: `payload-token=${payloadToken}`,
-        },
-      })
+  const { data: cartData, isLoading } = useQuery({
+    queryKey: ['/cart', lang],
+    queryFn: () =>
+      baseFetch({
+        url: '/api/carts?limit=1',
+        method: 'GET',
+      }),
+    enabled: !!user?.id,
+  })
 
-      if (userRes.ok) {
-        const userData = await userRes.json()
-        user = userData.user
+  const cartItems = cartData?.items || []
+  const cartId = cartData?.id || null
 
-        // If user is authenticated, fetch their cart
-        if (user) {
-          const cartRes = await fetch(
-            `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/carts?limit=1`,
-            {
-              headers: {
-                Cookie: `payload-token=${payloadToken}`,
-              },
-            },
-          )
-
-          if (cartRes.ok) {
-            const cartData = await cartRes.json()
-            cartItems = cartData?.docs[0]?.items || []
-            cartId = cartData?.docs[0]?.id
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error checking authentication or fetching cart:', error)
-      // User is not authenticated or there was an error, will fall back to localStorage
-    }
-  }
   return (
-    <section className="container mx-auto px-4 flex flex-col gap-5 items-center">
-      <CartItems cartItems={cartItems} cartId={cartId} user={user} />
-      {user ? <CheckoutButton user={user} /> : <SigninForm isCart />}
+    <section className="container mx-auto p-4 flex flex-col gap-5 items-center">
+      {isLoading && user?.id ? (
+        <p className="text-gray-400">{t('loadingCart')}</p>
+      ) : (
+        <CartItems cartItems={cartItems} cartId={cartId} user={user} />
+      )}
+      {user?.id ? <CheckoutButton /> : <SigninForm isCart />}
     </section>
   )
 }

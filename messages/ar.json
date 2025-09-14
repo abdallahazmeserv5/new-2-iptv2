@@ -66,5 +66,15 @@
   "status": "حالة طلب الشراء",
   "totalPrice": "السعر الإجمالي",
   "monthes": "أشهر",
-  "goToCart": "الذهاب للسلة"
+  "goToCart": "الذهاب للسلة",
+  "logOut": "تسجيل الخروج",
+  "loading": "جاري التحميل...",
+  "faildToCreateOrder": "خطأ في إنشاء الفاتورة حاول مجددًا",
+  "cartEmpty": "السلة فارغة أضف منتاجات",
+  "loadingCart": "جاري تحميل السلة",
+  "cartIsEmpty": "السلة فارغة",
+  "yourCart": "سلتك",
+  "createingAccount": "جاري إنشاء الحساب",
+  "phone": "رقم الهاتف",
+  "welcomeAtTornado": "مرحبًا بك في Tornado IPTV، بريدك الإلكتروني: {email} وكلمة المرور الخاصة بك: {password}"
 }

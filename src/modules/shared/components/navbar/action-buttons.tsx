@@ -16,7 +16,7 @@ export default function ActionButtons({
     <div className="flex items-center gap-2 lg:gap-8">
       <Cart user={user} />
       <Bell className="text-white" />
-      <AuthButton user={user} />
+      <AuthButton />
     </div>
   )
 }

@@ -16,8 +16,14 @@ export const Cart: CollectionConfig = {
       if (req.user) return { user: { equals: req.user.id } }
       return false
     },
-    create: ({ req }) => !!req.user, // must be logged in
-    update: ({ req }) => !!req.user,
+    create: ({ req }) => !!req.user,
+    update: ({ req }) => {
+      if (req.headers?.get('authorization') === `Bearer ${process.env.PAYLOAD_API_KEY}`) {
+        return true
+      }
+      if (req.user) return { user: { equals: req.user.id } }
+      return false
+    },
     delete: ({ req }) => !!req.user,
   },
   fields: [

@@ -3,7 +3,7 @@
 import ImageFallBack from '@/modules/shared/components/image-fall-back'
 import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 interface CartItem {
@@ -55,7 +55,7 @@ interface Props {
 export default function CartItems({ cartItems, cartId, user }: Props) {
   const [guestCart, setGuestCart] = useState<LocalStorageCartItem[]>([])
   const [isClient, setIsClient] = useState(false)
-
+  const t = useTranslations()
   const queryClient = useQueryClient()
   const lang = useLocale()
 
@@ -120,7 +120,7 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
       return res.json()
     },
     onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ['cart', lang] })
+      queryClient.refetchQueries({ queryKey: ['/cart', lang] })
     },
   })
 
@@ -172,15 +172,14 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
   const hasItems = itemsToDisplay && itemsToDisplay.length > 0
 
   if (!isClient) {
-    return <div className="text-white">Loading cart...</div>
+    return <div className="text-white">{t('loadingCart')}</div>
   }
 
   if (!hasItems) {
     return (
       <section className="bg-[#151515] flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border border-[#262626]">
         <div className="text-center">
-          <h3 className="text-white font-bold text-xl mb-2">Your cart is empty</h3>
-          <p className="text-gray-400">Add some plans to get started!</p>
+          <h3 className="text-white font-bold text-xl mb-2">{t('cartEmpty')}</h3>
         </div>
       </section>
     )

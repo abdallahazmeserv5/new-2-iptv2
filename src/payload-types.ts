@@ -139,6 +139,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
+  phone: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -318,6 +319,10 @@ export interface Cart {
  */
 export interface Order {
   id: string;
+  /**
+   * Visible only when order status is "Paid". Enter the message and save to send to the user.
+   */
+  messageToUser?: string | null;
   user: string | User;
   items: {
     plan: string | Plan;
@@ -335,7 +340,7 @@ export interface Order {
     | number
     | boolean
     | null;
-  status?: ('pending' | 'paid' | 'failed' | 'cancelled') | null;
+  status?: ('pending' | 'paid' | 'failed' | 'cancelled' | 'completed') | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -433,6 +438,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  phone?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -586,6 +592,7 @@ export interface CartsSelect<T extends boolean = true> {
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
+  messageToUser?: T;
   user?: T;
   items?:
     | T

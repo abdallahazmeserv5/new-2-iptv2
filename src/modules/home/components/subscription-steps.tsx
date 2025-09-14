@@ -25,15 +25,15 @@ export default function SubscriptionSteps() {
       img: '/home/subscription-steps/arrow-svg.svg',
     },
     {
-      label: t('contact-us'),
-      icon: '/home/subscription-steps/headphone-svg.svg',
+      label: t('enjoyOurServices'),
+      icon: '/home/subscription-steps/tv-svg.svg',
     },
   ]
   return (
     <section className="container mx-auto px-4 hidden md:block">
       <SectionHeader sectionHeader={t('subscriptionsSteps')} />
       <div className="hidden md:block">
-        <ul className="flex justify-between items-center flex-wrap gap-4">
+        <ul className="flex justify-evenly items-center flex-wrap gap-2">
           {steps.map((step, index) => {
             if (step?.img) {
               // arrows

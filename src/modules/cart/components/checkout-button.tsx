@@ -1,47 +1,39 @@
 'use client'
 
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useMutation } from '@tanstack/react-query'
 import PrimaryButton from '@/modules/shared/components/primary-button'
+import { baseFetch } from '@/actions/fetch'
+import { toast } from 'sonner'
 
-export default function CheckoutButton({ user }: { user: any }) {
+export default function CheckoutButton() {
   const t = useTranslations()
-  const [loading, setLoading] = useState(false)
 
-  const handleCheckout = async () => {
-    try {
-      setLoading(true)
-
-      const res = await fetch('/api/payment/initiate', {
+  const checkoutMutation = useMutation({
+    mutationFn: async () =>
+      baseFetch({
+        url: '/api/payment/initiate',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      })
-
-      const data = await res.json()
-
+      }),
+    onSuccess: (data) => {
       if (data?.IsSuccess && data?.Data?.InvoiceURL) {
-        // ✅ Redirect to MyFatoorah payment page
         window.location.href = data.Data.InvoiceURL
       } else {
-        alert('Failed to create invoice')
-        console.error(data)
+        toast('faildToCreateOrder')
       }
-    } catch (err) {
-      console.error('Checkout error:', err)
-      alert('Something went wrong')
-    } finally {
-      setLoading(false)
-    }
-  }
+    },
+    onError: () => {
+      toast('faildToCreateOrder')
+    },
+  })
 
   return (
     <PrimaryButton
-      onClick={handleCheckout}
-      className="disabled:bg-muted cursor-not-allowed"
-      disabled={loading}
+      onClick={() => checkoutMutation.mutate()}
+      className="disabled:bg-muted disabled:cursor-not-allowed cursor-pointer"
+      disabled={checkoutMutation.isPending}
     >
-      {loading ? t('loading') : t('buyNow')}
+      {checkoutMutation.isPending ? t('loading') : t('buyNow')}
     </PrimaryButton>
   )
 }

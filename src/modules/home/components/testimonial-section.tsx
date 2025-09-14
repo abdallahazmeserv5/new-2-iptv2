@@ -9,15 +9,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
+import { Separator } from '@/components/ui/separator'
 import ImageFallBack from '@/modules/shared/components/image-fall-back'
 import SectionHeader from '@/modules/shared/components/section-header'
 import { Media, Testimonial } from '@/payload-types'
+import { Star } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { PaginatedDocs } from 'payload'
 import { useEffect, useState } from 'react'
-import { Star } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
 
 interface Props {
   testimonial: PaginatedDocs<Testimonial>
@@ -48,7 +47,7 @@ export default function TestimonialSection({ testimonial }: Props) {
 
   return (
     <section className="container mx-auto px-4">
-      <SectionHeader sectionHeader={t('avilablePackages')} />
+      <SectionHeader sectionHeader={t('testimonials')} />
 
       <Carousel
         plugins={[

@@ -24,12 +24,14 @@ import { Orders } from './collections/Order'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-
 export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+    components: {
+      beforeDashboard: ['src/modules/payload/components/notification-icon#NotificationIcon'],
     },
   },
   // Allow browser requests from your Next.js app (dev)

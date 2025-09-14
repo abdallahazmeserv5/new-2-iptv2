@@ -1,49 +1,66 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
+import { baseFetch } from '@/actions/fetch'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useLocale, useTranslations } from 'next-intl'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 async function verifyPayment(paymentId: string) {
-  const res = await fetch(`/api/payment/callback`, {
+  const data = await baseFetch({
+    url: '/api/payment/callback',
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ paymentId }),
+    body: { paymentId },
   })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.error || 'Failed to verify payment')
+
+  if (!data?.order) {
+    throw new Error(data?.error || 'Failed to verify payment')
+  }
+
   return data.order
 }
 
 export default function PaymentSuccessPage() {
+  const searchParams = useSearchParams()
   const router = useRouter()
   const t = useTranslations()
-  const paymentId = new URLSearchParams(window.location.search).get('paymentId') || ''
+  const queryClient = useQueryClient()
+  const paymentId = searchParams.get('paymentId')
+  const lang = useLocale()
 
   const {
+    mutate: runVerifyPayment,
     data: order,
     error,
-    isLoading,
-  } = useQuery({
-    queryKey: ['verify-payment', paymentId],
-    queryFn: () => verifyPayment(paymentId),
-    enabled: !!paymentId,
+    isPending: isLoading,
+  } = useMutation({
+    mutationFn: (paymentId: string) => verifyPayment(paymentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/cart', lang] })
+    },
   })
 
-  if (!paymentId) {
-    router.push('/')
+  useEffect(() => {
+    if (paymentId) {
+      runVerifyPayment(paymentId)
+    } else {
+      router.push('/')
+    }
+  }, [paymentId, runVerifyPayment, router])
+
+  if (isLoading) {
+    return <p className="p-10 text-center text-gray-300 bg-[#151515]">{t('finishingPayment')}</p>
   }
 
-  if (isLoading)
-    return <p className="p-10 text-center text-gray-300 bg-[#151515]">{t('finishingPayment')}</p>
-  if (error)
+  if (error) {
     return (
       <p className="p-10 text-center text-red-400 bg-[#151515]">❌ {(error as Error).message}</p>
     )
+  }
 
   return (
     <div className="flex flex-col items-center justify-center bg-[#151515] text-white p-5">
-      <h1 className="text-3xl sm:text-4xl font-bold text-green-400 mb-4"> {t('successPayment')}</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold text-green-400 mb-4">{t('successPayment')}</h1>
       <p className="text-gray-300 mb-6">{t('thankYou')}</p>
 
       <div className="bg-[#1f1f1f] p-6 rounded-2xl shadow-md w-full max-w-md">

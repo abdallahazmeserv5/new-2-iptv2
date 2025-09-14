@@ -8,10 +8,12 @@ import './styles.css'
 import Footer from '@/modules/shared/components/footer'
 import { Toaster } from '@/components/ui/sonner'
 import { cookies, headers } from 'next/headers'
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  description: 'Best site to watch the latest movies.',
+  title: 'Tornado 4K',
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
@@ -31,20 +33,27 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   cookieStore.getAll().forEach((c) => {
     headers.append('cookie', `${c.name}=${c.value}`)
   })
-  const { user } = await payload.auth({ headers })
+
+  const queryClient = new QueryClient()
+  const { user } = await queryClient.fetchQuery({
+    queryKey: ['/me'],
+    queryFn: async () => await payload.auth({ headers }),
+  })
 
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (
     <html lang={lang} dir={dir}>
       <Providers>
         <NextIntlClientProvider>
-          <body className="min-h-screen flex flex-col">
-            <Navbar settings={settings} user={user} />
-            <main className="flex-1"> {children}</main>
-            <Footer settings={settings} />
-            <Toaster richColors closeButton />
-          </body>
-          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <body className="min-h-screen flex flex-col">
+              <Navbar settings={settings} user={user} />
+              <main className="flex-1"> {children}</main>
+              <Footer settings={settings} />
+              <Toaster richColors closeButton />
+            </body>
+          </HydrationBoundary>
+          <ReactQueryDevtools initialIsOpen={false} />
         </NextIntlClientProvider>
       </Providers>
     </html>

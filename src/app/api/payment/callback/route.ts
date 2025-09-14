@@ -1,15 +1,12 @@
-// src/app/api/payment/callback/route.ts
+import { sendMessage } from '@/actions/need-bot'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   try {
-    // 1. استخرج PaymentId من body
     const { paymentId } = await req.json()
-    if (!paymentId) {
-      return NextResponse.json({ error: 'Missing PaymentId' }, { status: 400 })
-    }
+    if (!paymentId) return NextResponse.json({ error: 'Missing PaymentId' }, { status: 400 })
 
-    // 2. Verify payment مع MyFatoorah
+    // 1) Verify payment with MyFatoorah
     const res = await fetch(`${process.env.MYFATOORAH_BASE_URL}/v2/GetPaymentStatus`, {
       method: 'POST',
       headers: {
@@ -19,47 +16,49 @@ export async function POST(req: Request) {
       body: JSON.stringify({ Key: paymentId, KeyType: 'paymentId' }),
     })
     const data = await res.json()
-    if (!data.IsSuccess) {
-      return NextResponse.json({ error: 'Payment verification failed' }, { status: 400 })
-    }
 
-    // 3. جلب المستخدم
+    if (!data.IsSuccess)
+      return NextResponse.json({ error: 'Payment verification failed' }, { status: 400 })
+
+    // 2) Get current user
     const userRes = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/users/me`, {
       headers: { cookie: req.headers.get('cookie') || '' },
       cache: 'no-store',
     })
-    const userData = await userRes.json()
-    const userId = userData.user.id
 
-    // 4. جلب آخر order pending
+    const userData = await userRes.json()
+
+    const userId = userData?.user?.id
+    const phoneRaw = userData?.user?.phone
+    if (!userId || !phoneRaw)
+      return NextResponse.json({ error: 'User or phone not found' }, { status: 404 })
+
+    // 3) Get the latest pending order
     const ordersRes = await fetch(
       `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/orders?where[user][equals]=${userId}&where[status][equals]=pending&sort=-createdAt&limit=1`,
       { headers: { cookie: req.headers.get('cookie') || '' }, cache: 'no-store' },
     )
     const ordersData = await ordersRes.json()
-    const order = ordersData.docs[0]
+    const order = ordersData?.docs?.[0]
     if (!order) return NextResponse.json({ error: 'No pending order found' }, { status: 404 })
 
-    // 5. تحديث order إلى completed
+    // 4) Patch order -> paid
     await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/orders/${order.id}`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${process.env.PAYLOAD_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        status: 'completed',
-        paymentInfo: data.Data,
-      }),
+      body: JSON.stringify({ status: 'paid', paymentInfo: data.Data }),
     })
 
-    // 6. مسح الـ cart الخاص بالمستخدم
+    // 5) Clear cart if exists
     const cartsRes = await fetch(
       `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/carts?where[user][equals]=${userId}&limit=1`,
       { headers: { cookie: req.headers.get('cookie') || '' }, cache: 'no-store' },
     )
     const cartsData = await cartsRes.json()
-    const cart = cartsData.docs[0]
+    const cart = cartsData?.docs?.[0]
     if (cart) {
       await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/carts/${cart.id}`, {
         method: 'PATCH',
@@ -67,9 +66,20 @@ export async function POST(req: Request) {
           Authorization: `Bearer ${process.env.PAYLOAD_API_KEY}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ items: [] }), // تفريغ العناصر
+        body: JSON.stringify({ items: [] }),
       })
     }
+
+    // 6) Send message using sendMessage helper
+    const phone = phoneRaw.startsWith('+') ? phoneRaw.slice(1) : phoneRaw
+    const itemsSummary = (order.items || [])
+      .map((it: any) => `${it.plan?.title ?? it.plan} x${it.quantity}`)
+      .join(', ')
+
+    const message = `Thanks for buying from us! Order #${order.id} `
+
+    await sendMessage({ number: phone, message })
+    await sendMessage({ number: phone, message })
 
     return NextResponse.json({ success: true, order })
   } catch (err) {

@@ -1,12 +1,24 @@
 import { configuredPayload } from '@/actions'
 import CartDetails from '@/modules/cart/components/cart-details'
-import PlanDetails from '@/modules/palns/components/plan-details'
 import BreadCrumb from '@/modules/shared/components/bread-crumb'
 import { getTranslations } from 'next-intl/server'
+import { cookies } from 'next/headers'
 
-export default async function page() {
+export default async function Page() {
   const t = await getTranslations()
   const payload = await configuredPayload()
+
+  const cookieStore = cookies()
+  const headers = new Headers()
+  headers.set('cookie', cookieStore.toString())
+
+  let user = null
+  try {
+    const { user: authUser } = await payload.auth({ headers })
+    user = authUser || null
+  } catch (err) {
+    console.error('Auth check failed:', err)
+  }
 
   return (
     <main className="bg-black flex flex-col gap-5 lg:gap-10 pt-5">
@@ -20,7 +32,8 @@ export default async function page() {
         ]}
         title={t('cart')}
       />
-      <CartDetails />
+      {/* ✅ pass the authenticated user down */}
+      <CartDetails user={user} />
     </main>
   )
 }

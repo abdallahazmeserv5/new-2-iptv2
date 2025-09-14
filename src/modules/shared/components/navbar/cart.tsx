@@ -5,23 +5,16 @@ import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { User } from '@/payload-types'
-import { configuredPayload } from '@/actions'
 import { useQuery } from '@tanstack/react-query'
 import { useLocale, useTranslations } from 'next-intl'
-import { getPayload } from 'payload'
 import Link from 'next/link'
+import { baseFetch } from '@/actions/fetch'
 
 interface Props {
   user:
@@ -50,31 +43,17 @@ export default function Cart({ user }: Props) {
   const lang = useLocale()
   const [guestCart, setGuestCart] = useState<LocalStorageCartItem[]>([])
 
-  // Fetch authenticated user's cart
   const { data: authCart } = useQuery({
-    queryKey: ['cart', lang],
+    queryKey: ['/cart', lang],
     queryFn: async () => {
-      if (!user?.id) return { items: [] } // no user logged in
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/carts?where[user][equals]=${user.id}&limit=1`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // ✅ include cookies automatically
-        },
-      )
-
-      if (!res.ok) {
-        console.error('Failed to fetch cart', await res.text())
-        return { items: [] }
-      }
-
-      const data = await res.json()
-      return data.docs[0] || { items: [] } // return the cart or empty structure
+      if (!user?.id) return { items: [] }
+      const data = await baseFetch({
+        url: `/api/carts?where[user][equals]=${user.id}&limit=1`,
+      })
+      return data?.docs?.[0] || { items: [] }
     },
-    enabled: !!user?.id, // Only run if user is authenticated
+
+    enabled: !!user?.id,
   })
 
   // Load guest cart from localStorage
@@ -92,7 +71,7 @@ export default function Cart({ user }: Props) {
     }
   }, [user?.id])
 
-  // Listen for localStorage changes (when items are added from other components)
+  // Listen for localStorage changes
   useEffect(() => {
     if (!user?.id) {
       const handleStorageChange = () => {
@@ -110,8 +89,6 @@ export default function Cart({ user }: Props) {
       }
 
       window.addEventListener('storage', handleStorageChange)
-
-      // Also listen for custom events (for same-tab updates)
       window.addEventListener('guestCartUpdated', handleStorageChange)
 
       return () => {
@@ -121,24 +98,19 @@ export default function Cart({ user }: Props) {
     }
   }, [user?.id])
 
-  // Determine which cart to use
   const cart = user?.id ? authCart : { items: guestCart }
 
-  const totalQuantity = cart?.items?.reduce((acc: any, item: any) => acc + item.quantity, 0)
+  const totalQuantity = cart?.items?.reduce((acc: number, item: any) => acc + item.quantity, 0)
+  const totalPrice = cart?.items?.reduce(
+    (acc: number, item: any) => acc + item.quantity * item.plan.price,
+    0,
+  )
 
-  // Calculate total price
-  const totalPrice = cart?.items?.reduce((acc: any, item: any) => {
-    const price = user?.id ? item.plan.price : item.plan.price
-    return acc + item.quantity * price
-  }, 0)
-
-  // Remove item from guest cart
   const removeFromGuestCart = (planId: string) => {
     try {
       const updatedCart = guestCart.filter((item) => item.planId !== planId)
       localStorage.setItem('guestCart', JSON.stringify(updatedCart))
       setGuestCart(updatedCart)
-      // Dispatch custom event for same-tab updates
       window.dispatchEvent(new CustomEvent('guestCartUpdated'))
     } catch (error) {
       console.error('Error removing from guest cart:', error)
@@ -164,11 +136,11 @@ export default function Cart({ user }: Props) {
           align="end"
         >
           <DropdownMenuLabel className="text-lg font-semibold border-b border-gray-700 pb-2">
-            Your Cart {!user?.id && '(Guest)'}
+            {t('yourCart')} {!user?.id && '(Guest)'}
           </DropdownMenuLabel>
 
           {cart?.items?.length === 0 ? (
-            <p className="text-sm text-gray-400 mt-2">Cart is empty</p>
+            <p className="text-sm text-gray-400 mt-2">{t('cartIsEmpty')}</p>
           ) : (
             <div className="max-h-64 overflow-y-auto">
               {cart?.items?.map((item: any) => (
@@ -179,7 +151,7 @@ export default function Cart({ user }: Props) {
                   <div className="flex gap-3 items-center">
                     {item.plan.image?.url && (
                       <img
-                        src={user?.id ? item.plan.image.url : item.plan.image.url}
+                        src={item.plan.image.url}
                         alt={item.plan.image.alt || item.plan.title}
                         className="w-12 h-12 object-cover rounded-md"
                       />
@@ -187,17 +159,14 @@ export default function Cart({ user }: Props) {
                     <div className="flex flex-col">
                       <span className="font-medium">{item.plan.title}</span>
                       <span className="text-sm text-gray-400">
-                        {item.quantity} × {item.plan.price} riyals
+                        {item.quantity} × {item.plan.price} {t('sar')}
                       </span>
-                      {item.plan.numberOfSubscriptions && (
-                        <span className="text-xs text-gray-500">
-                          {item.plan.numberOfSubscriptions} subscribers
-                        </span>
-                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">{item.quantity * item.plan.price} ر.س</span>
+                    <span className="font-semibold">
+                      {item.quantity * item.plan.price} {t('sar')}
+                    </span>
                     {!user?.id && (
                       <button
                         onClick={(e) => {
