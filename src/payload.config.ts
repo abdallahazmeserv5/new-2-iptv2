@@ -33,8 +33,8 @@ export default buildConfig({
     },
   },
   // Allow browser requests from your Next.js app (dev)
-  cors: [process.env.NEXT_PUBLIC_APP_ORIGIN || 'http://localhost:3000'],
-  csrf: [process.env.NEXT_PUBLIC_APP_ORIGIN || 'http://localhost:3000'],
+  cors: [process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL || 'http://localhost:3000'],
+  csrf: [process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL || 'http://localhost:3000'],
   globals: [Settings],
   collections: [Users, Media, HeroSlides, Packages, Plans, Testimonial, Banners, Faq, Cart, Orders],
   editor: lexicalEditor(),
@@ -62,13 +62,11 @@ export default buildConfig({
     defaultLocale: 'ar',
     fallback: true,
   },
+
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
   sharp,
 
-  plugins: [
-    payloadCloudPlugin(),
-    // storage-adapter-placeholder
-  ],
+  plugins: [payloadCloudPlugin()],
 })
