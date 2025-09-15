@@ -39,19 +39,14 @@ export default buildConfig({
     },
   },
   // Allow browser requests from your Next.js app (dev)
-  cors: [
-    process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL ||
-      'http://localhost:3000' ||
-      'https://new-2-iptv2.vercel.app',
-    'https://tornado-tv4k.com',
-    'https://new-2-iptv2-7qr22drx5-deltahubegy-2565s-projects.vercel.app/',
-  ],
+  cors: '*',
   csrf: [
     process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL ||
       'http://localhost:3000' ||
       'https://new-2-iptv2.vercel.app',
     'https://tornado-tv4k.com',
-    'https://new-2-iptv2-7qr22drx5-deltahubegy-2565s-projects.vercel.app/',
+    process.env.VERCEL_URL,
+    '*',
   ],
   globals: [Settings],
 
