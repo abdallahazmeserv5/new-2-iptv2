@@ -71,7 +71,7 @@ export default function Packages({ packages }: HeroProps) {
                 className="basis-[270px] shrink-0 h-full bg-[#262626] p-8 flex flex-col items-center rounded-2xl me-5 group cursor-pointer"
               >
                 <ImageFallBack
-                  alt={img.alt}
+                  alt={img?.alt}
                   width={180}
                   height={185}
                   className="object-contain transform transition-transform duration-300 group-hover:scale-110 w-[150px] h-[150px]"

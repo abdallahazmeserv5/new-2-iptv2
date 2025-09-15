@@ -265,11 +265,11 @@ export default function Plans({ plans }: HeroProps) {
               className="basis-[270px] shrink-0 h-full bg-[#262626] p-2 sm:p-8 items-center rounded-2xl me-5 group cursor-pointer flex flex-col gap-2 "
             >
               <ImageFallBack
-                alt={img.alt}
+                alt={img?.alt}
                 width={180}
                 height={185}
                 className="object-contain transform transition-transform duration-300 group-hover:scale-110 w-[150px] h-[150px]"
-                src={img.url || ''}
+                src={img?.url || ''}
               />
               <p className="text-white font-semibold text-lg group-hover:text-primary">
                 {slideItem.title}

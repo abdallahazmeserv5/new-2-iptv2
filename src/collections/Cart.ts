@@ -1,4 +1,5 @@
 // src/collections/Cart.ts
+import { isAdmin } from '@/modules/payload/utils'
 import type { CollectionConfig } from 'payload'
 
 export const Cart: CollectionConfig = {
@@ -12,19 +13,19 @@ export const Cart: CollectionConfig = {
   },
   access: {
     read: ({ req }) => {
-      // only allow the logged-in user to read their own cart
-      if (req.user) return { user: { equals: req.user.id } }
-      return false
+      if (!req.user) return false
+      return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
     },
     create: ({ req }) => !!req.user,
     update: ({ req }) => {
-      if (req.headers?.get('authorization') === `Bearer ${process.env.PAYLOAD_API_KEY}`) {
-        return true
-      }
-      if (req.user) return { user: { equals: req.user.id } }
-      return false
+      if (!req.user) return false
+      if (isAdmin({ req })) return true
+      return { user: { equals: req.user.id } }
     },
-    delete: ({ req }) => !!req.user,
+    delete: ({ req }) => {
+      if (!req.user) return false
+      return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
+    },
   },
   fields: [
     {
