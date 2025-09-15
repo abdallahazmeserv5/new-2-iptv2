@@ -9,7 +9,6 @@ import sharp from 'sharp'
 import { en } from '@payloadcms/translations/languages/en'
 import { ar } from '@payloadcms/translations/languages/ar'
 
-import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Settings } from './globals/Settings'
 import { HeroSlides } from './collections/HeroSlides'
@@ -20,6 +19,7 @@ import { Banners } from './collections/Banners'
 import { Faq } from './collections/Faq'
 import { Cart } from './collections/Cart'
 import { Orders } from './collections/Order'
+import { Users } from './collections/Users'
 // import { Admins } from './collections/Admins'
 
 const filename = fileURLToPath(import.meta.url)

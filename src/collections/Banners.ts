@@ -1,8 +1,18 @@
 import { CollectionConfig } from 'payload'
 import { FixedToolbarFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
+import { isAdmin } from '@/modules/payload/utils'
 
 export const Banners: CollectionConfig = {
   slug: 'banners',
+  access: {
+    create: isAdmin,
+    read: () => true, // normal users can see banners
+    update: isAdmin,
+    delete: isAdmin,
+  },
+  admin: {
+    useAsTitle: 'title',
+  },
   fields: [
     {
       name: 'image',
@@ -10,20 +20,14 @@ export const Banners: CollectionConfig = {
       relationTo: 'media',
       required: true,
       localized: true,
-      label: {
-        en: 'Banner Image',
-        ar: 'صورة السلايدر',
-      },
+      label: { en: 'Banner Image', ar: 'صورة السلايدر' },
     },
     {
       name: 'title',
       type: 'richText',
       required: true,
       localized: true,
-      label: {
-        en: 'Banner Main Text',
-        ar: 'العنوان الرئيسي',
-      },
+      label: { en: 'Banner Main Text', ar: 'العنوان الرئيسي' },
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [FixedToolbarFeature(), ...defaultFeatures],
       }),
@@ -36,10 +40,7 @@ export const Banners: CollectionConfig = {
           type: 'text',
           localized: true,
           required: true,
-          label: {
-            en: 'Banner Button Text',
-            ar: 'نص الزرار ',
-          },
+          label: { en: 'Banner Button Text', ar: 'نص الزرار' },
         },
         {
           name: 'buttonUrl',
@@ -52,10 +53,7 @@ export const Banners: CollectionConfig = {
               ar: 'أين تذهب بعد الضغط علي الزر؟',
             },
           },
-          label: {
-            en: 'Banner Button URL',
-            ar: 'رابط الزرار',
-          },
+          label: { en: 'Banner Button URL', ar: 'رابط الزرار' },
         },
       ],
     },

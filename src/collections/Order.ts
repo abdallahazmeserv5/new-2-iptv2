@@ -1,4 +1,5 @@
 import { sendMessage } from '@/actions/need-bot'
+import { isAdmin } from '@/modules/payload/utils'
 import type { CollectionConfig, PayloadRequest } from 'payload'
 
 export const Orders: CollectionConfig = {
@@ -6,13 +7,16 @@ export const Orders: CollectionConfig = {
   labels: { singular: 'Order', plural: 'Orders' },
   admin: { useAsTitle: 'id' },
   access: {
-    read: ({ req }) => (req.user ? { user: { equals: req.user.id } } : false),
+    read: ({ req }) => {
+      if (!req.user) return false
+      return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
+    },
     create: ({ req }) => !!req.user,
     update: ({ req }) => {
-      if (req.user?.collection === 'users') return { user: { equals: req.user.id } }
-      if (req.headers?.get('authorization') === `Bearer ${process.env.PAYLOAD_API_KEY}`) return true
-      return false
+      if (!req.user) return false
+      return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
     },
+    delete: isAdmin,
   },
   fields: [
     {
@@ -52,27 +56,31 @@ export const Orders: CollectionConfig = {
     },
     { name: 'createdAt', type: 'date', defaultValue: () => new Date(), admin: { readOnly: true } },
   ],
-
   hooks: {
     afterChange: [
-      async ({ req, doc }: { req: PayloadRequest; doc: any }) => {
+      async ({ req, doc, previousDoc }) => {
         try {
-          if (!doc || doc.status !== 'paid' || !doc.messageToUser || doc.messageSent) return
+          // Only for paid orders
+          if (doc.status !== 'paid') return
 
-          // Resolve user id from relationship
+          // Only when messageToUser has changed (admin typed something new)
+          if (!doc.messageToUser || doc.messageToUser === previousDoc?.messageToUser) return
+
+          // Ensure we have user ID
           const userId: string | undefined = typeof doc.user === 'string' ? doc.user : doc.user?.id
+
           if (!userId) return console.warn(`Order ${doc.id} has no user`)
 
-          const user = await req.payload.findByID({ collection: 'users', id: userId, depth: 0 })
+          const user = await req.payload.findByID({
+            collection: 'users',
+            id: userId,
+            depth: 0,
+          })
+
           const phoneRaw: string | undefined = user?.phone
+
           if (!phoneRaw) {
-            await req.payload.update({
-              collection: 'orders',
-              id: doc.id,
-              data: { updatedAt: new Date().toISOString() },
-              overrideAccess: true,
-              req,
-            })
+            console.warn(`User ${userId} has no phone for order ${doc.id}`)
             return
           }
 
@@ -80,37 +88,20 @@ export const Orders: CollectionConfig = {
           const message = doc.messageToUser
 
           const res = await sendMessage({ number: phone, message })
-          const res1 = await sendMessage({ number: phone, message })
-          if (!res) {
-            await req.payload.update({
-              collection: 'orders',
-              id: doc.id,
-              data: { updatedAt: new Date().toISOString() },
-              overrideAccess: true,
-              req,
-            })
-            return
-          }
+          const res2 = await sendMessage({ number: phone, message })
 
-          // Mark message as sent
-          await req.payload.update({
-            collection: 'orders',
-            id: doc.id,
-            data: { updatedAt: new Date().toISOString() },
-            overrideAccess: true,
-            req,
-          })
-        } catch (err: any) {
-          console.error('Error in Orders.afterChange hook:', err)
-          try {
+          if (res || res2) {
+            // Mark that the message has been sent
             await req.payload.update({
               collection: 'orders',
               id: doc.id,
-              data: { updatedAt: new Date().toISOString() },
+              data: { updatedAt: new Date().toISOString(), status: 'completed' },
               overrideAccess: true,
               req,
             })
-          } catch {}
+          }
+        } catch (err) {
+          console.error('Error in Orders.afterChange hook:', err)
         }
       },
     ],

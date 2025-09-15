@@ -1,3 +1,4 @@
+import { isAdmin } from '@/modules/payload/utils'
 import { CollectionConfig } from 'payload'
 
 export const Testimonial: CollectionConfig = {
@@ -6,12 +7,22 @@ export const Testimonial: CollectionConfig = {
     singular: { en: 'Testimonial', ar: 'رأي العميل' },
     plural: { en: 'Testimonials', ar: 'آراء العملاء' },
   },
+  access: {
+    create: isAdmin, // only admin can create
+    read: () => true, // everyone can read/query
+    update: isAdmin, // only admin can update
+    delete: isAdmin, // only admin can delete
+  },
+  admin: {
+    useAsTitle: 'reviewer', // show reviewer name in dashboard
+  },
   fields: [
     {
       name: 'image',
       type: 'upload',
       relationTo: 'media',
       required: true,
+      localized: true,
       label: {
         en: 'User Image',
         ar: 'صورة المستخدم',

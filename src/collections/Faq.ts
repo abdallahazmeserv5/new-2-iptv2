@@ -1,3 +1,4 @@
+import { isAdmin } from '@/modules/payload/utils'
 import { CollectionConfig } from 'payload'
 
 export const Faq: CollectionConfig = {
@@ -11,6 +12,15 @@ export const Faq: CollectionConfig = {
       en: 'FAQ',
       ar: 'الأسئلة الأكثر شيوعًا',
     },
+  },
+  access: {
+    create: isAdmin, // only admin can create
+    read: () => true, // everyone can read/query
+    update: isAdmin, // only admin can update
+    delete: isAdmin, // only admin can delete
+  },
+  admin: {
+    useAsTitle: 'question', // show question as title in dashboard
   },
   fields: [
     {

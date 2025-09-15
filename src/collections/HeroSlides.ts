@@ -1,5 +1,6 @@
+import { isAdmin } from '@/modules/payload/utils'
 import { CollectionConfig } from 'payload'
-
+ 
 export const HeroSlides: CollectionConfig = {
   slug: 'hero-slides',
   labels: {
@@ -12,12 +13,22 @@ export const HeroSlides: CollectionConfig = {
       ar: 'السلايد في الصفحة الرئيسية',
     },
   },
+  access: {
+    create: isAdmin, // only admin can create
+    read: () => true, // everyone can read/query
+    update: isAdmin, // only admin can update
+    delete: isAdmin, // only admin can delete
+  },
+  admin: {
+    useAsTitle: 'title', // show main text in dashboard list
+  },
   fields: [
     {
       name: 'mainImage',
       type: 'upload',
       relationTo: 'media',
       required: true,
+      localized: true,
       label: {
         en: 'Main Image',
         ar: 'الصورة الرئيسية',
@@ -28,6 +39,7 @@ export const HeroSlides: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       required: true,
+      localized: true,
       label: {
         en: 'Secondary Image',
         ar: 'الصورة الثانوية',
