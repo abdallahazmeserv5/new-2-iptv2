@@ -28,6 +28,7 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: Users.slug,
+
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -39,14 +40,19 @@ export default buildConfig({
     },
   },
   // Allow browser requests from your Next.js app (dev)
-  cors: '*',
-  csrf: [
-    process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL ||
-      'http://localhost:3000' ||
-      'https://new-2-iptv2.vercel.app',
+  cors: [
+    process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL,
+    'http://localhost:3000',
+    'https://new-2-iptv2.vercel.app',
     'https://tornado-tv4k.com',
     process.env.VERCEL_URL,
-    '*',
+  ],
+  csrf: [
+    process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL,
+    'http://localhost:3000',
+    'https://new-2-iptv2.vercel.app',
+    'https://tornado-tv4k.com',
+    process.env.VERCEL_URL,
   ],
   globals: [Settings],
 
@@ -88,7 +94,6 @@ export default buildConfig({
     defaultLocale: 'ar',
     fallback: true,
   },
-
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
