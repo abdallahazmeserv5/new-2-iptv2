@@ -21,6 +21,7 @@ export default async function page({ params }: Props) {
     payload.findByID({
       collection: 'plans',
       id: planId,
+      depth: 2,
     }),
   ])
 

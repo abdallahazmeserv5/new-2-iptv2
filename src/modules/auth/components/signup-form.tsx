@@ -54,11 +54,11 @@ export default function SignupForm() {
 
       try {
         // Send the message twice
-        await sendMessage({
+        const res1 = await sendMessage({
           number: phoneNumber,
           message: t('welcomeAtTornado', { email: values.email, password: values.password }),
         })
-        await sendMessage({
+        const res2 = await sendMessage({
           number: phoneNumber,
           message: t('welcomeAtTornado', { email: values.email, password: values.password }),
         })

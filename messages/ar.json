@@ -82,5 +82,9 @@
   "country": "البلد",
   "review": "المراجعة",
   "rate": "التقييم",
-  "submit": "إرسال"
+  "submit": "إرسال",
+  "submitting": "جاري الإرسال",
+  "rating": "التقييم",
+  "reviewSubmitted": "شكرا علي تقييمك وهو الأن قيد المراجعة",
+  "addetionalPages": "صفحات إضافية"
 }

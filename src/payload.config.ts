@@ -20,6 +20,7 @@ import { Faq } from './collections/Faq'
 import { Cart } from './collections/Cart'
 import { Orders } from './collections/Order'
 import { Users } from './collections/Users'
+import { Pages } from './collections/Pages'
 // import { Admins } from './collections/Admins'
 
 const filename = fileURLToPath(import.meta.url)
@@ -38,10 +39,32 @@ export default buildConfig({
     },
   },
   // Allow browser requests from your Next.js app (dev)
-  cors: [process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL || 'http://localhost:3000'],
-  csrf: [process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL || 'http://localhost:3000'],
+  cors: [
+    process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL ||
+      'http://localhost:3000' ||
+      'https://new-2-iptv2.vercel.app',
+    'https://tornado-tv4k.com',
+  ],
+  csrf: [
+    process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL ||
+      'http://localhost:3000' ||
+      'https://new-2-iptv2.vercel.app',
+    'https://tornado-tv4k.com',
+  ],
   globals: [Settings],
-  collections: [Users, Media, HeroSlides, Packages, Plans, Testimonial, Banners, Faq, Cart, Orders],
+  collections: [
+    Users,
+    Media,
+    HeroSlides,
+    Packages,
+    Plans,
+    Testimonial,
+    Banners,
+    Faq,
+    Cart,
+    Orders,
+    Pages,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

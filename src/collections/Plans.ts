@@ -10,7 +10,7 @@ export const Plans: CollectionConfig = {
   access: {
     create: isAdmin, // only admin can create
     read: () => true, // everyone can read/query
-    update: isAdmin, // only admin can update
+    update: () => true, // only admin can update
     delete: isAdmin, // only admin can delete
   },
   admin: {
@@ -86,14 +86,11 @@ export const Plans: CollectionConfig = {
       name: 'reviews',
       type: 'array',
       label: { en: 'Reviews', ar: 'المراجعات' },
+      access: {
+        create: () => true,
+        update: () => true,
+      },
       fields: [
-        {
-          name: 'image',
-          type: 'upload',
-          relationTo: 'media',
-          required: true,
-          label: { en: 'User Image', ar: 'صورة المستخدم' },
-        },
         {
           name: 'reviewer',
           type: 'text',
@@ -127,6 +124,7 @@ export const Plans: CollectionConfig = {
           name: 'hasReviewed',
           type: 'checkbox',
           label: { en: 'Has been reviewed?', ar: 'هل تمت مراجعتها؟' },
+          defaultValue: false,
         },
       ],
     },

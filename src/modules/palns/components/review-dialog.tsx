@@ -31,6 +31,7 @@ import PrimaryButton from '@/modules/shared/components/primary-button'
 import { Plus } from 'lucide-react'
 import { baseFetch } from '@/actions/fetch'
 import { useUser } from '@/modules/shared/hooks/use-user'
+import { Plan } from '@/payload-types'
 
 // ✅ Form schema - all strings for form inputs
 const formSchema = z.object({
@@ -57,14 +58,11 @@ const apiSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 type ApiPayload = z.infer<typeof apiSchema>
 
-interface ReviewResponse {
-  success: boolean
-  data?: any
-  error?: string
-  message?: string
+interface Props {
+  planDetails: Plan
 }
 
-export function ReviewDialog() {
+export function ReviewDialog({ planDetails }: Props) {
   const t = useTranslations()
   const params = useParams()
   const planId = params?.planId as string
@@ -94,38 +92,36 @@ export function ReviewDialog() {
   })
 
   // ✅ React Query mutation with proper error handling
-  const mutation = useMutation<ReviewResponse, Error, FormData>({
+  const mutation = useMutation({
     mutationFn: async (values: FormData) => {
-      if (!planId) {
-        throw new Error('Plan ID is required')
-      }
-      if (!user?.id) {
-        throw new Error('User authentication required')
-      }
+      if (!planId) throw new Error('Plan ID is required')
+      if (!user?.id) throw new Error('User authentication required')
 
-      const transformedData = transformFormData(values)
-      const payload: ApiPayload = {
-        ...transformedData,
-        plan: planId,
+      const newReview = {
+        ...transformFormData(values),
+        hasReviewed: false,
         user: user.id,
-        createdAt: new Date().toISOString(),
       }
 
-      const response = await baseFetch({
-        url: '/api/reviews',
-        method: 'POST',
-        body: payload,
+      // ✅ baseFetch returns parsed JSON or null
+      const data = await baseFetch({
+        url: `/api/plans/${planId}`,
+        method: 'PATCH',
+        body: {
+          reviews: [
+            ...(planDetails?.reviews || []), // existing reviews
+            newReview, // new one
+          ],
+        },
       })
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.message || `HTTP ${response.status}: Failed to submit review`)
-      }
+      console.log({ data })
 
-      return response.json()
+      if (!data) throw new Error('Failed to submit review')
+      return data
     },
     onSuccess: () => {
-      toast.success(t('reviewSubmitted') || 'Review submitted successfully!')
+      toast.success(t('reviewSubmitted'))
       form.reset({
         reviewer: user?.name || '',
         reviewerCountry: '',
@@ -133,16 +129,10 @@ export function ReviewDialog() {
         rate: '5',
       })
       setOpen(false)
-
-      // Invalidate and refetch reviews
-      queryClient.invalidateQueries({
-        queryKey: ['reviews', planId],
-      })
     },
     onError: (error: Error) => {
       console.error('Review submit error:', error)
-      const errorMessage = error.message || t('reviewFailed') || 'Failed to submit review'
-      toast.error(errorMessage)
+      toast.error(error.message || t('reviewFailed'))
     },
   })
 
@@ -186,13 +176,9 @@ export function ReviewDialog() {
               name="reviewer"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('name') || 'Name'}</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t('enterName') || 'Enter your name'}
-                      {...field}
-                      disabled={mutation.isPending}
-                    />
+                    <Input placeholder={t('name')} {...field} disabled={mutation.isPending} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,13 +191,9 @@ export function ReviewDialog() {
               name="reviewerCountry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('country') || 'Country'}</FormLabel>
+                  <FormLabel>{t('country')}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t('enterCountry') || 'Enter your country'}
-                      {...field}
-                      disabled={mutation.isPending}
-                    />
+                    <Input placeholder={t('country')} {...field} disabled={mutation.isPending} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -224,10 +206,10 @@ export function ReviewDialog() {
               name="review"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('review') || 'Review'}</FormLabel>
+                  <FormLabel>{t('review')}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder={t('enterReview') || 'Share your experience...'}
+                      placeholder={t('review')}
                       {...field}
                       disabled={mutation.isPending}
                       rows={4}
@@ -244,7 +226,7 @@ export function ReviewDialog() {
               name="rate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('rating') || 'Rating (1-5)'}</FormLabel>
+                  <FormLabel>{t('rating')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -265,9 +247,7 @@ export function ReviewDialog() {
               className="w-full"
               disabled={mutation.isPending || !form.formState.isValid}
             >
-              {mutation.isPending
-                ? t('submitting') || 'Submitting...'
-                : t('submit') || 'Submit Review'}
+              {mutation.isPending ? t('submitting') : t('submit')}
             </Button>
           </form>
         </Form>

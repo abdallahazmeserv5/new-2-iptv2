@@ -81,5 +81,9 @@
   "country": "Country",
   "review": "Review",
   "rate": "Rate",
-  "submit": "Submit"
+  "submit": "Submit",
+  "submitting": "Submiting",
+  "rating": "Rating",
+  "reviewSubmitted": "Thanks for your review, its under reviewing.",
+  "addetionalPages": "Addetional Pages"
 }

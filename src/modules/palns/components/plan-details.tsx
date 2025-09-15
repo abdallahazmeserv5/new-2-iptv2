@@ -30,7 +30,7 @@ export default async function PlanDetails({ planDetails }: Props) {
       {/* second coulm */}
       <div className="flex-1 min-w-0 space-y-5">
         <PlanDescription description={planDetails.description || ''} />
-        <Reviews reviews={planDetails.reviews || []} />
+        <Reviews planDetails={planDetails} />
         <PlanFeatures features={planDetails.features || []} />
         <DownloadPlatforms platforms={planDetails.downloadPlatforms || []} />
       </div>

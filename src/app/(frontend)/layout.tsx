@@ -35,21 +35,34 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   })
 
   const queryClient = new QueryClient()
-  const { user } = await queryClient.fetchQuery({
-    queryKey: ['/me'],
-    queryFn: async () => await payload.auth({ headers }),
-  })
+  const [user, pages] = await Promise.all([
+    queryClient.fetchQuery({
+      queryKey: ['/me'],
+      queryFn: async () => await payload.auth({ headers }),
+    }),
+    queryClient.fetchQuery({
+      queryKey: ['/pages', lang],
+      queryFn: async () =>
+        await payload.find({
+          collection: 'pages',
+          where: {},
+          pagination: false,
+        }),
+    }),
+  ])
+
+  console.log({ pages })
 
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (
-    <html lang={lang} dir={dir}>
+    <html lang={lang} dir={dir} className="scroll-smooth">
       <Providers>
         <NextIntlClientProvider>
           <HydrationBoundary state={dehydrate(queryClient)}>
             <body className="min-h-screen flex flex-col">
-              <Navbar settings={settings} user={user} />
+              <Navbar settings={settings} user={user} pages={pages} />
               <main className="flex-1"> {children}</main>
-              <Footer settings={settings} />
+              <Footer settings={settings} pages={pages} />
               <Toaster richColors closeButton />
             </body>
           </HydrationBoundary>

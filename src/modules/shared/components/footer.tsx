@@ -1,17 +1,26 @@
 import { Separator } from '@/components/ui/separator'
-import { Media, Setting } from '@/payload-types'
+import { Media, Page, Setting } from '@/payload-types'
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import React from 'react'
 import ImageFallBack from './image-fall-back'
+import { PaginatedDocs } from 'payload'
 
 interface Props {
   settings: Setting
+  pages: PaginatedDocs<Page>
 }
 
-export default async function Footer({ settings }: Props) {
+export default async function Footer({ settings, pages }: Props) {
   const t = await getTranslations()
   const socialMedia = settings.socialMedia || []
+
+  const pagesFooter = pages.docs
+    .filter((page) => page.publish && page.showInFooter)
+    .map((page) => {
+      return { link: `/page/${page.id}`, label: page.title }
+    })
+
   const mainNav = [
     {
       label: t('packages'),
@@ -48,9 +57,9 @@ export default async function Footer({ settings }: Props) {
             </ul>
           </div>
           <div className="">
-            <h3 className="text-primary font-semibold text-lg">{t('homePage')}</h3>
+            <h3 className="text-primary font-semibold text-lg">{t('addetionalPages')}</h3>
             <ul className="flex flex-col gap-[14px] mt-8">
-              {mainNav.map((item) => (
+              {pagesFooter.map((item) => (
                 <li className="text-[#999999] hover:text-white ">
                   <Link href={item.link}>{item.label}</Link>
                 </li>

@@ -1,21 +1,35 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { Page } from '@/payload-types'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { PaginatedDocs } from 'payload'
 
-export default function Navigation() {
+export default function Navigation({ pages }: { pages: PaginatedDocs<Page> }) {
   const t = useTranslations()
   const pathName = usePathname()
   const isActive = (url: string) => pathName === url
 
-  const navItems = [
+  const pagesOnNavbar = pages.docs
+    .filter((page) => page.publish && page.showInHeader)
+    .map((page) => {
+      return { href: `/page/${page.id}`, label: page.title }
+    })
+
+  const navItems: {
+    href: string
+    label: string
+    highlight?: boolean
+  }[] = [
     { href: '/', label: t('homePage'), highlight: true },
-    { href: '/#subscriptions', label: t('subscriptions') },
+    { href: '/#plans', label: t('subscriptions') },
     { href: '/#features', label: t('features') },
-    { href: '/#contact-us', label: t('contact-us') },
-    { href: '/#blogs', label: t('blogs') },
+    ...pagesOnNavbar,
+
+    // { href: '/#contact-us', label: t('contact-us') },
+    // { href: '/#blogs', label: t('blogs') },
   ]
 
   return (

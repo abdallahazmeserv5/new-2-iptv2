@@ -38,6 +38,7 @@ export async function POST(req: Request) {
       `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/orders?where[user][equals]=${userId}&where[status][equals]=pending&sort=-createdAt&limit=1`,
       { headers: { cookie: req.headers.get('cookie') || '' }, cache: 'no-store' },
     )
+
     const ordersData = await ordersRes.json()
     const order = ordersData?.docs?.[0]
     if (!order) return NextResponse.json({ error: 'No pending order found' }, { status: 404 })
