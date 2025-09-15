@@ -28,7 +28,6 @@ export default function Reviews({ planDetails }: Props) {
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
 
   const slideItems = planDetails?.reviews
-  console.log({ slideItems })
 
   useEffect(() => {
     if (!api) {

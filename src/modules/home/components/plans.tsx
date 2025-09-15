@@ -261,7 +261,8 @@ export default function Plans({ plans }: HeroProps) {
         {slideItems?.map((slideItem, index) => {
           const img = slideItem.image as Media
           return (
-            <div
+            <Link
+              href={`/plans/${slideItem.id}`}
               key={index}
               className="basis-[270px] shrink-0 h-full bg-[#262626] p-2 sm:p-8 items-center rounded-2xl me-5 group cursor-pointer flex flex-col gap-2 "
             >
@@ -291,7 +292,7 @@ export default function Plans({ plans }: HeroProps) {
                 <ArrowUpRight className="text-[#9EFF3E] hidden sm:block " />
                 {t('subscripeInPlan')}
               </PrimaryButton>
-            </div>
+            </Link>
           )
         })}
       </section>

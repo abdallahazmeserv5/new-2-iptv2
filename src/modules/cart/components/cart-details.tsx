@@ -6,6 +6,7 @@ import CheckoutButton from './checkout-button'
 import SigninForm from '@/modules/auth/components/signin-form'
 import { baseFetch } from '@/actions/fetch'
 import { useLocale, useTranslations } from 'next-intl'
+import SignupForm from '@/modules/auth/components/signup-form'
 
 // 👇 add type for the prop
 type CartDetailsProps = {
@@ -40,7 +41,7 @@ export default function CartDetails({ user }: CartDetailsProps) {
       ) : (
         <CartItems cartItems={cartItems} cartId={cartId} user={user} />
       )}
-      {user?.id ? <CheckoutButton /> : <SigninForm isCart />}
+      {user?.id ? <CheckoutButton /> : <SignupForm isCart />}
     </section>
   )
 }

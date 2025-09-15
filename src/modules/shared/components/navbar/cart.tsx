@@ -15,14 +15,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { baseFetch } from '@/actions/fetch'
-
-interface Props {
-  user:
-    | (User & {
-        collection: 'users'
-      })
-    | null
-}
+import { useUser } from '../../hooks/use-user'
 
 interface LocalStorageCartItem {
   planId: string
@@ -38,7 +31,9 @@ interface LocalStorageCartItem {
   }
 }
 
-export default function Cart({ user }: Props) {
+export default function Cart() {
+  const { user } = useUser()
+
   const t = useTranslations()
   const lang = useLocale()
   const [guestCart, setGuestCart] = useState<LocalStorageCartItem[]>([])

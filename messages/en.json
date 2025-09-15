@@ -85,5 +85,10 @@
   "submitting": "Submiting",
   "rating": "Rating",
   "reviewSubmitted": "Thanks for your review, its under reviewing.",
-  "addetionalPages": "Addetional Pages"
+  "addetionalPages": "Addetional Pages",
+  "remove": "Remove",
+  "guestMode": "Guest Mode",
+  "alreadyHaveAccount": "Already have an account",
+  "log": "Log in",
+  "loginSucess": "Login successful!"
 }

@@ -10,6 +10,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { cookies, headers } from 'next/headers'
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { baseFetch } from '@/actions/fetch'
 
 export const metadata = {
   description: 'Best site to watch the latest movies.',
@@ -50,8 +51,6 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
         }),
     }),
   ])
-
-  console.log({ pages })
 
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (

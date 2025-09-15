@@ -7,11 +7,7 @@ import { PaginatedDocs } from 'payload'
 
 interface Props {
   settings: Setting
-  user:
-    | (User & {
-        collection: 'users'
-      })
-    | null
+  user: any
   pages: PaginatedDocs<Page>
 }
 
@@ -24,7 +20,7 @@ export default function Navbar({ settings, user, pages }: Props) {
         <div className="hidden lg:block">
           <Navigation pages={pages} />
         </div>
-        <ActionButtons user={user} />
+        <ActionButtons />
         {/* mobile screen */}
         <MobileMenu user={user} />
       </header>

@@ -86,5 +86,10 @@
   "submitting": "جاري الإرسال",
   "rating": "التقييم",
   "reviewSubmitted": "شكرا علي تقييمك وهو الأن قيد المراجعة",
-  "addetionalPages": "صفحات إضافية"
+  "addetionalPages": "صفحات إضافية",
+  "remove": "حذف",
+  "guestMode": "الزائر",
+  "alreadyHaveAccount": "لديك حساب بالفعل",
+  "log": "سجل الدخول",
+  "loginSucess": "تسجيل الدخول بنجاح"
 }

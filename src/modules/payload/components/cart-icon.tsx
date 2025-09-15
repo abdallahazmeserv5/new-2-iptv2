@@ -13,9 +13,12 @@ export function CartIcon() {
   useEffect(() => {
     const fetchData = async () => {
       const settings = await baseFetch({ url: '/api/globals/settings' })
-      const abandonAfterMs = (settings?.cartSettings?.abandonAfterMinutes ?? 60) * 60 * 1000
+      // TODO
+      const abandonAfterMs =
+        (settings?.cartSettings?.abandonAfterMinutes ?? 60) * 60 * 1000 + 500000
       // const abandonAfterMs = 1000
-      const messageIntervalMs = (settings?.cartSettings?.messageIntervalMinutes ?? 60) * 60 * 1000
+      const messageIntervalMs =
+        (settings?.cartSettings?.messageIntervalMinutes ?? 60) * 60 * 1000 + 500000
 
       // compute abandoned carts
       const abandonedAt = new Date(Date.now() - abandonAfterMs).toISOString()

@@ -1,5 +1,5 @@
 'use client'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +18,7 @@ import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface LocalStorageCartItem {
   planId: string
@@ -49,6 +50,8 @@ interface LocalStorageCartItem {
 
 export default function SigninForm({ isCart }: { isCart?: boolean }) {
   const router = useRouter()
+  const lang = useLocale()
+  const queryClient = useQueryClient()
   const t = useTranslations()
 
   const formSchema = z.object({
@@ -109,8 +112,10 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
 
       // Dispatch event to update other components
       window.dispatchEvent(new CustomEvent('guestCartUpdated'))
+      await queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
       toast.success(`Transferred ${guestCartItems.length} item(s) to your account!`)
+
       return true
     } catch (error) {
       console.error('Error transferring guest cart:', error)
@@ -140,14 +145,14 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
 
       // Transfer guest cart items to backend after successful login
       await transferGuestCartToBackend()
-
+      await queryClient.refetchQueries({ queryKey: ['/cart', lang] })
       // Small delay to ensure cart transfer completes
       await new Promise((resolve) => setTimeout(resolve, 500))
 
       if (isCart) {
         return router.refresh()
       }
-      router.push('/')
+      router.push('/cart')
       router.refresh() // Refresh to update auth state
     } catch (err) {
       console.error('Login error:', err)

@@ -11,20 +11,10 @@ export const Cart: CollectionConfig = {
     useAsTitle: 'id',
   },
   access: {
-    read: ({ req }) => {
-      if (!req.user) return false
-      return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
-    },
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => {
-      if (!req.user) return false
-      if (isAdmin({ req })) return true
-      return { user: { equals: req.user.id } }
-    },
-    delete: ({ req }) => {
-      if (!req.user) return false
-      return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
-    },
+    read: ({ req }) => true,
+    create: ({ req }) => true,
+    update: ({ req }) => true,
+    delete: ({ req }) => true,
   },
   fields: [
     {

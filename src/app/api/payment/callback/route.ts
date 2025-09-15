@@ -44,14 +44,17 @@ export async function POST(req: Request) {
     if (!order) return NextResponse.json({ error: 'No pending order found' }, { status: 404 })
 
     // 4) Patch order -> paid
-    await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/orders/${order.id}`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${process.env.PAYLOAD_API_KEY}`,
-        'Content-Type': 'application/json',
+    const updateFatoorah = await fetch(
+      `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/orders/${order.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${process.env.PAYLOAD_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'paid', paymentInfo: data.Data }),
       },
-      body: JSON.stringify({ status: 'paid', paymentInfo: data.Data }),
-    })
+    )
 
     // 5) Clear cart if exists
     const cartsRes = await fetch(

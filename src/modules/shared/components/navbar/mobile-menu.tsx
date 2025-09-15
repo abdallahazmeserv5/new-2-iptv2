@@ -51,7 +51,7 @@ export default function MobileMenu({ user }: { user: any }) {
             pathname === '/cart' ? 'text-primary' : 'text-muted-foreground',
           )}
         >
-          <Cart user={user} />
+          <Cart />
           {t('cart')}
         </li>
       </ul>

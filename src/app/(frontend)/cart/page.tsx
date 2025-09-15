@@ -32,7 +32,6 @@ export default async function Page() {
         ]}
         title={t('cart')}
       />
-      {/* ✅ pass the authenticated user down */}
       <CartDetails user={user} />
     </main>
   )

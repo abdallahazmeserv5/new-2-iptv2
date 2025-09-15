@@ -2,7 +2,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { configuredPayload } from '@/actions' // use your helper that returns a payload instance
-import { PayloadRequest } from 'payload'
 import { cookies } from 'next/headers'
 
 export async function POST(req: NextRequest) {
@@ -11,20 +10,48 @@ export async function POST(req: NextRequest) {
     const { planId, quantity = 1 } = body as { planId?: string; quantity?: number }
 
     if (!planId) {
-      return NextResponse.json({ success: false, error: 'planId required' }, { status: 400 })
+      return NextResponse.json({ success: false, error: 'planId is required' }, { status: 400 })
+    }
+
+    if (quantity < 1) {
+      return NextResponse.json(
+        { success: false, error: 'quantity must be at least 1' },
+        { status: 400 },
+      )
     }
 
     const payload = await configuredPayload()
 
+    // Get cookies properly
+    const cookieStore = cookies()
     const headers = new Headers()
-    headers.set('cookie', cookies().toString())
+    headers.set('cookie', cookieStore.toString())
 
     // Get the current user from Payload (v3)
     const { user } = await payload.auth({
       headers,
     })
-    if (!user) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
+    if (!user || !user.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized - please log in' },
+        { status: 401 },
+      )
+    }
+
+    // Verify the plan exists first
+    try {
+      const plan = await payload.findByID({
+        collection: 'plans', // adjust collection name if different
+        id: planId,
+      })
+
+      if (!plan) {
+        return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
+      }
+    } catch (planError) {
+      console.error('Plan verification error:', planError)
+      return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 404 })
     }
 
     // 1) Look for existing cart for this user
@@ -39,7 +66,8 @@ export async function POST(req: NextRequest) {
     let cart = found?.docs?.[0] ?? null
 
     if (!cart) {
-      // create a new cart with the item
+      // Create a new cart with the item
+
       const created = await payload.create({
         collection: 'carts',
         data: {
@@ -47,27 +75,37 @@ export async function POST(req: NextRequest) {
           items: [{ plan: planId, quantity }],
         },
       })
+
       return NextResponse.json({ success: true, cart: created }, { status: 201 })
     }
 
-    // cart exists -> update items: increment quantity if plan exists, otherwise push
+    // Cart exists -> update items
+
+    // Ensure items is an array
     const items = Array.isArray(cart.items) ? [...cart.items] : []
 
-    const idx = items.findIndex(
-      (it: any) =>
-        String(it.plan) === String(planId) ||
-        (it.plan?.id && String(it.plan.id) === String(planId)),
-    )
+    // Find existing item with this plan
+    const existingItemIndex = items.findIndex((item: any) => {
+      // Handle both populated and non-populated plan references
+      const itemPlanId = typeof item.plan === 'object' ? item.plan?.id : item.plan
+      return String(itemPlanId) === String(planId)
+    })
 
-    if (idx > -1) {
-      // increment existing item quantity
-      const currentQty = items[idx].quantity ?? 0
-      items[idx] = { ...items[idx], quantity: currentQty + quantity }
+    if (existingItemIndex > -1) {
+      // Increment existing item quantity
+      const currentQuantity = Number(items[existingItemIndex].quantity) || 0
+      const newQuantity = currentQuantity + Number(quantity)
+
+      items[existingItemIndex] = {
+        ...items[existingItemIndex],
+        quantity: newQuantity,
+      }
     } else {
-      // add new item
-      items.push({ plan: planId, quantity })
+      // Add new item
+      items.push({ plan: planId, quantity: Number(quantity) })
     }
 
+    // Update the cart
     const updated = await payload.update({
       collection: 'carts',
       id: cart.id,
@@ -77,6 +115,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, cart: updated }, { status: 200 })
   } catch (err: any) {
     console.error('Add to cart error:', err)
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 })
+
+    // More specific error handling
+    if (err.name === 'ValidationError') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Validation error: ' + (err.message || 'Invalid data'),
+        },
+        { status: 400 },
+      )
+    }
+
+    if (err.name === 'NotFoundError') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Resource not found',
+        },
+        { status: 404 },
+      )
+    }
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Internal server error',
+      },
+      { status: 500 },
+    )
   }
 }

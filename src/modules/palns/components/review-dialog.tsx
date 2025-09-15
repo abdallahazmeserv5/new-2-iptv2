@@ -115,8 +115,6 @@ export function ReviewDialog({ planDetails }: Props) {
         },
       })
 
-      console.log({ data })
-
       if (!data) throw new Error('Failed to submit review')
       return data
     },

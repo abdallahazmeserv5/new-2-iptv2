@@ -95,7 +95,6 @@ export async function POST(req: Request) {
     })
 
     const data = await res.json()
-
     // 6. Return payment link data
     return NextResponse.json(data)
   } catch (err) {

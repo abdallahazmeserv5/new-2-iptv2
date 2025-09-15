@@ -15,7 +15,6 @@ export default async function HomePage({ params }: Props) {
     id: pageId,
   })
 
-  console.log({ pageData })
   return (
     <div className="min-h-screen bg-background">
       {/* Main Content */}

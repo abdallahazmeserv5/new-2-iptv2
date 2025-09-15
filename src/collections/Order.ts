@@ -12,10 +12,7 @@ export const Orders: CollectionConfig = {
       return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
     },
     create: ({ req }) => !!req.user,
-    update: ({ req }) => {
-      if (!req.user) return false
-      return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
-    },
+    update: ({ req }) => true,
     delete: isAdmin,
   },
   fields: [
