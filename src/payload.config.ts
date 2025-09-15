@@ -44,14 +44,17 @@ export default buildConfig({
       'http://localhost:3000' ||
       'https://new-2-iptv2.vercel.app',
     'https://tornado-tv4k.com',
+    'https://new-2-iptv2-7qr22drx5-deltahubegy-2565s-projects.vercel.app/',
   ],
   csrf: [
     process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL ||
       'http://localhost:3000' ||
       'https://new-2-iptv2.vercel.app',
     'https://tornado-tv4k.com',
+    'https://new-2-iptv2-7qr22drx5-deltahubegy-2565s-projects.vercel.app/',
   ],
   globals: [Settings],
+
   collections: [
     Users,
     Media,
