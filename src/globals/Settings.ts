@@ -13,7 +13,7 @@ export const Settings: GlobalConfig = {
       relationTo: 'media',
       required: true,
     },
-
+    // social media
     {
       name: 'socialMedia',
       type: 'array',
@@ -45,6 +45,28 @@ export const Settings: GlobalConfig = {
           },
         },
       ],
+    },
+
+    // message time
+    {
+      name: 'abandonAfterMinutes',
+      type: 'number',
+      required: true,
+      defaultValue: 60, // 1 hour
+      label: {
+        en: 'Minutes before cart is abandoned',
+        ar: 'عدد الدقايق قبل اعتبار السلة مهجورة',
+      },
+    },
+    {
+      name: 'messageIntervalMinutes',
+      type: 'number',
+      required: true,
+      defaultValue: 60, // send again every 1 hour
+      label: {
+        en: 'Minutes between sending messages',
+        ar: 'عدد الدقايق بين إرسال الرسائل',
+      },
     },
   ],
 }

@@ -7,13 +7,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
-import { Separator } from '@/components/ui/separator'
 import ImageFallBack from '@/modules/shared/components/image-fall-back'
 import { Media, Plan } from '@/payload-types'
 import Autoplay from 'embla-carousel-autoplay'
 import { Star } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+import { ReviewDialog } from './review-dialog'
+import { useUser } from '@/modules/shared/hooks/use-user'
 
 interface Props {
   reviews: Plan['reviews']
@@ -43,7 +44,10 @@ export default function Reviews({ reviews }: Props) {
 
   return (
     <section className="flex flex-col gap-3 sm:gap-5 bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white w-full overflow-hidden">
-      <h3 className="font-bold">{t('reviews')}</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="font-bold">{t('reviews')}</h3>
+        <ReviewDialog />
+      </div>
 
       <div className=" relative pb-16">
         <Carousel

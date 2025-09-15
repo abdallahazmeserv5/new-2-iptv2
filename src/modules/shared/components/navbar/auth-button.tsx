@@ -9,7 +9,8 @@ import { useQuery } from '@tanstack/react-query'
 
 export default function AuthButton() {
   const t = useTranslations()
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
+    staleTime: Infinity,
     queryKey: ['/me'],
     queryFn: async () => {
       const res = await baseFetch({ url: '/api/users/me' })
@@ -17,6 +18,10 @@ export default function AuthButton() {
     },
   })
   const user = data?.user
+
+  if (isLoading) {
+    return <div className="size-8" />
+  }
 
   return (
     <>

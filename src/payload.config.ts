@@ -31,7 +31,10 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
-      beforeDashboard: ['src/modules/payload/components/notification-icon#NotificationIcon'],
+      beforeDashboard: [
+        'src/modules/payload/components/notification-icon#NotificationIcon',
+        'src/modules/payload/components/cart-icon#CartIcon',
+      ],
     },
   },
   // Allow browser requests from your Next.js app (dev)

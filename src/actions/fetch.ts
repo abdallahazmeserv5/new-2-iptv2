@@ -35,7 +35,9 @@ export async function baseFetch({
       throw new Error(`Fetch failed: ${response.status} ${response.statusText} → ${errorText}`)
     }
 
-    return response.json()
+    const data = response.json()
+
+    return data
   } catch (error: any) {
     console.error('baseFetch error:', error.message || error)
     return null

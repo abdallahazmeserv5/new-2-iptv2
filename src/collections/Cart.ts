@@ -1,4 +1,3 @@
-// src/collections/Cart.ts
 import { isAdmin } from '@/modules/payload/utils'
 import type { CollectionConfig } from 'payload'
 
@@ -57,7 +56,6 @@ export const Cart: CollectionConfig = {
     {
       name: 'updatedAt',
       type: 'date',
-      admin: { readOnly: true },
       hooks: {
         beforeChange: [
           () => new Date(), // auto update timestamp

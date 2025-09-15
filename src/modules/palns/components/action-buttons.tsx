@@ -8,28 +8,28 @@ import React from 'react'
 export default async function ActionButtons({ packageId }: { packageId: string }) {
   const t = await getTranslations()
   return (
-    <section className="flex  sm:flex-col gap-4 sm:gap-5 items-center bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white w-full">
+    <section className="flex flex-col gap-4 items-stretch bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white w-full">
       <Button
         variant="outline"
-        className="flex-1 h-12 sm:h-14 sm:max-w-[260px] flex gap-3 sm:gap-5 items-center justify-center cursor-pointer"
+        className="w-full h-12 sm:h-14 px-4 flex gap-3 items-center justify-center cursor-pointer min-w-0"
       >
         <ShoppingCart />
         {t('addToCart')}
       </Button>
 
-      <Button className="flex-1 h-12 sm:h-14 sm:max-w-[260px] bg-[#333333] text-white flex gap-3 sm:gap-5 items-center justify-center cursor-pointer hover:bg-[#333333] hover:text-primary">
+      <Button className="w-full h-12 sm:h-14 px-4 bg-[#333333] text-white flex gap-3 items-center justify-center cursor-pointer hover:bg-[#333333] hover:text-primary min-w-0">
         <BanknoteArrowUp /> {t('buy')}
       </Button>
 
-      <Button className="flex-1 h-12 sm:h-14 sm:max-w-[260px] flex gap-3 sm:gap-5 items-center justify-center cursor-pointer">
+      <Button className="w-full h-12 sm:h-14 px-4 flex gap-3 items-center justify-center cursor-pointer min-w-0">
         <ImageFallBack
           src="/whatsapp.webp"
           alt="Whats app Logo"
-          className="size-5 sm:size-[23px]"
+          className="w-5 h-5"
           width={23}
           height={23}
         />
-        <span className="hidden sm:block">{t('whatsApp')}</span>
+        <span className="block">{t('whatsApp')}</span>
       </Button>
     </section>
   )

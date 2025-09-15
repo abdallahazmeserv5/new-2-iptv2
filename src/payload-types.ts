@@ -657,6 +657,8 @@ export interface Setting {
         id?: string | null;
       }[]
     | null;
+  abandonAfterMinutes: number;
+  messageIntervalMinutes: number;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -674,6 +676,8 @@ export interface SettingsSelect<T extends boolean = true> {
         socialMediaImage?: T;
         id?: T;
       };
+  abandonAfterMinutes?: T;
+  messageIntervalMinutes?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

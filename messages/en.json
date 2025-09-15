@@ -75,5 +75,11 @@
   "yourCart": "Your cart",
   "createingAccount": "Creating an account",
   "phone": "Phone number",
-  "welcomeAtTornado": "Welcome at tornado IPTV, your email is: {email} and your password is: {password}"
+  "welcomeAtTornado": "Welcome at tornado IPTV, your email is: {email} and your password is: {password}",
+  "leaveReview": "Add Review",
+  "name": "Name",
+  "country": "Country",
+  "review": "Review",
+  "rate": "Rate",
+  "submit": "Submit"
 }

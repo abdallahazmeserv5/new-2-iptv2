@@ -76,5 +76,11 @@
   "yourCart": "سلتك",
   "createingAccount": "جاري إنشاء الحساب",
   "phone": "رقم الهاتف",
-  "welcomeAtTornado": "مرحبًا بك في Tornado IPTV، بريدك الإلكتروني: {email} وكلمة المرور الخاصة بك: {password}"
+  "welcomeAtTornado": "مرحبًا بك في Tornado IPTV، بريدك الإلكتروني: {email} وكلمة المرور الخاصة بك: {password}",
+  "leaveReview": "إضافة تعليق",
+  "name": "الاسم",
+  "country": "البلد",
+  "review": "المراجعة",
+  "rate": "التقييم",
+  "submit": "إرسال"
 }

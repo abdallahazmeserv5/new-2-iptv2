@@ -29,18 +29,36 @@ export const Orders: CollectionConfig = {
         condition: (data, siblingData) => siblingData?.status === 'paid',
       },
     },
-    { name: 'user', type: 'relationship', relationTo: 'users', required: true },
+    {
+      name: 'user',
+      type: 'relationship',
+      relationTo: 'users',
+      required: true,
+      admin: {
+        readOnly: true,
+      },
+    },
     {
       name: 'items',
       type: 'array',
       required: true,
+      admin: {
+        readOnly: true,
+      },
       fields: [
         { name: 'plan', type: 'relationship', relationTo: 'plans', required: true },
         { name: 'quantity', type: 'number', required: true },
         { name: 'price', type: 'number', required: true },
       ],
     },
-    { name: 'total', type: 'number', required: true },
+    {
+      name: 'total',
+      type: 'number',
+      required: true,
+      admin: {
+        readOnly: true,
+      },
+    },
     { name: 'paymentInfo', type: 'json', admin: { readOnly: true, hidden: true } },
     {
       name: 'status',

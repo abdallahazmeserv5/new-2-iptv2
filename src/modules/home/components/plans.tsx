@@ -22,6 +22,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import ImageFallBack from '@/modules/shared/components/image-fall-back'
 import { useRouter } from 'next/navigation'
 import { baseFetch } from '@/actions/fetch'
+import PrimaryButton from '@/modules/shared/components/primary-button'
 
 interface HeroProps {
   plans: PaginatedDocs<Plan>
@@ -221,13 +222,13 @@ export default function Plans({ plans }: HeroProps) {
                     ))}
                   </ul>
 
-                  <button
-                    className="px-12 py-2 w-fit cursor-pointer text-white border border-[#0DB981] border-t-transparent rounded-md flex items-center gap-1 sm:gap-5 hover:bg-[#0DB981] mt-auto"
+                  <PrimaryButton
+                    className="flex gap-2 items-center justify-center"
                     onClick={() => addToCart(slideItem.id)}
                   >
                     <ArrowUpRight className="text-[#9EFF3E] " />
                     {t('subscripeInPlan')}
-                  </button>
+                  </PrimaryButton>
                 </CarouselItem>
               )
             })}
@@ -283,13 +284,13 @@ export default function Plans({ plans }: HeroProps) {
                 {slideItem.duration} {t('monthes')}
               </p>
 
-              <button
-                className="px-12 py-2 w-fit cursor-pointer text-white border border-[#0DB981] border-t-transparent rounded-md flex items-center gap-1 sm:gap-5 hover:bg-[#0DB981] mt-auto text-xs sm:text-base"
+              <PrimaryButton
+                className="flex gap-2 items-center justify-center"
                 onClick={() => addToCart(slideItem.id)}
               >
                 <ArrowUpRight className="text-[#9EFF3E] hidden sm:block " />
                 {t('subscripeInPlan')}
-              </button>
+              </PrimaryButton>
             </div>
           )
         })}

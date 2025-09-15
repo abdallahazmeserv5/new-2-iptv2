@@ -23,6 +23,7 @@ import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f
 import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { NotificationIcon as NotificationIcon_8d6c17eca93abc87297b1a6a0b070919 } from 'src/modules/payload/components/notification-icon'
+import { CartIcon as CartIcon_a2040ea97eaa01e747ca17755d4037ab } from 'src/modules/payload/components/cart-icon'
 
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -49,5 +50,6 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#InlineToolbarFeatureClient": InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient": FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "src/modules/payload/components/notification-icon#NotificationIcon": NotificationIcon_8d6c17eca93abc87297b1a6a0b070919
+  "src/modules/payload/components/notification-icon#NotificationIcon": NotificationIcon_8d6c17eca93abc87297b1a6a0b070919,
+  "src/modules/payload/components/cart-icon#CartIcon": CartIcon_a2040ea97eaa01e747ca17755d4037ab
 }
