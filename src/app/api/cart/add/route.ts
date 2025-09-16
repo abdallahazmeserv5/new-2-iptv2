@@ -116,7 +116,6 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     console.error('Add to cart error:', err)
 
-    // More specific error handling
     if (err.name === 'ValidationError') {
       return NextResponse.json(
         {
