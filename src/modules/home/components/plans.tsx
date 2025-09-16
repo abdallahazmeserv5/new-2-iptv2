@@ -23,6 +23,7 @@ import ImageFallBack from '@/modules/shared/components/image-fall-back'
 import { useRouter } from 'next/navigation'
 import { baseFetch } from '@/actions/fetch'
 import PrimaryButton from '@/modules/shared/components/primary-button'
+import { useCart } from '@/modules/cart/hooks/use-cart'
 
 interface HeroProps {
   plans: PaginatedDocs<Plan>
@@ -32,6 +33,10 @@ export default function Plans({ plans }: HeroProps) {
   const lang = useLocale()
   const queryClient = useQueryClient()
   const router = useRouter()
+  const t = useTranslations('')
+
+  // Use the custom cart hook
+  const { addToCart: addToCartHook } = useCart()
 
   // Check if user is authenticated
   const checkUserAuth = async (): Promise<boolean> => {
@@ -69,22 +74,16 @@ export default function Plans({ plans }: HeroProps) {
       // ✅ Refetch cart so UI updates
       queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
-      toast.success(
-        <div>
-          <Link href="/cart" className="text-white underline">
-            {t('goToCart')}
-          </Link>
-        </div>,
-        {
-          duration: Infinity, // keeps toast visible
-        },
-      )
+      toast.success(t(''), {
+        duration: Infinity, // keeps toast visible
+      })
     } catch (err) {
       console.error(err)
       toast.error('Something went wrong')
     }
   }
 
+  // Updated function to use the custom hook
   const addToLocalStorage = (planId: string) => {
     try {
       // Find the plan data to store complete information
@@ -94,51 +93,10 @@ export default function Plans({ plans }: HeroProps) {
         return
       }
 
-      const existingCart = localStorage.getItem('guestCart')
-      let cartItems = existingCart ? JSON.parse(existingCart) : []
+      // Use the custom hook instead of manual localStorage management
+      addToCartHook(selectedPlan, 1)
 
-      // Check if item already exists
-      const existingItemIndex = cartItems.findIndex((item: any) => item.planId === planId)
-
-      if (existingItemIndex > -1) {
-        // Update quantity if item exists
-        cartItems[existingItemIndex].quantity += 1
-      } else {
-        // Add new item with complete plan data (matching the actual structure)
-        cartItems.push({
-          planId,
-          quantity: 1,
-          addedAt: new Date().toISOString(),
-          plan: {
-            id: selectedPlan.id,
-            title: selectedPlan.title,
-            price: selectedPlan.price,
-            priceBeforeDiscount: selectedPlan.priceBeforeDiscount,
-            description: selectedPlan.description,
-            numberOfSubscriptions: selectedPlan.numberOfSubscriptions,
-            image: selectedPlan.image
-              ? {
-                  //@ts-ignore
-                  url: selectedPlan.image?.url,
-                  //@ts-ignore
-                  alt: selectedPlan.image?.alt,
-                }
-              : null,
-            features: selectedPlan.features || [],
-            downloadPlatforms: selectedPlan.downloadPlatforms || [],
-            reviews: selectedPlan.reviews || [],
-            createdAt: selectedPlan.createdAt,
-            updatedAt: selectedPlan.updatedAt,
-          },
-        })
-      }
-
-      localStorage.setItem('guestCart', JSON.stringify(cartItems))
-
-      // Dispatch custom event for same-tab cart updates
-      window.dispatchEvent(new CustomEvent('guestCartUpdated'))
-
-      toast.success('Added to cart (guest mode)')
+      toast.success(t('addToCartGuestMode'))
     } catch (err) {
       toast.error('Could not add to cart')
     }
@@ -153,10 +111,10 @@ export default function Plans({ plans }: HeroProps) {
     } else {
       addToLocalStorage(planId)
     }
+    return
     router.push('/cart')
   }
 
-  const t = useTranslations('')
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)

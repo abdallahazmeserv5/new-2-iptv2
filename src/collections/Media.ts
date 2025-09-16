@@ -3,13 +3,6 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  hooks: {
-    afterChange: [
-      ({ doc }) => {
-        console.log({ doc })
-      },
-    ],
-  },
   access: {
     create: isAdmin,
     read: () => true,

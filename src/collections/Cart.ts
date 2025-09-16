@@ -47,9 +47,7 @@ export const Cart: CollectionConfig = {
       name: 'updatedAt',
       type: 'date',
       hooks: {
-        beforeChange: [
-          () => new Date(), // auto update timestamp
-        ],
+        beforeChange: [() => new Date()],
       },
     },
   ],

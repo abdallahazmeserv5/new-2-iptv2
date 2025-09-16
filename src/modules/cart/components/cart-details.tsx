@@ -26,7 +26,6 @@ export default function CartDetails({ user }: CartDetailsProps) {
     queryFn: () =>
       baseFetch({
         url: '/api/carts?limit=1',
-        method: 'GET',
       }),
     enabled: !!user?.id,
   })

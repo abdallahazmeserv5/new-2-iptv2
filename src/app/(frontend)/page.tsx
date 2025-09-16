@@ -30,7 +30,6 @@ export default async function HomePage() {
       collection: 'faq',
     }),
   ])
-  console.log({ heroSection })
   return (
     <main className="flex flex-col gap-10 lg:gap-16 ">
       <Hero heroSection={heroSection} />

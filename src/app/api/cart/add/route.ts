@@ -7,7 +7,9 @@ import { cookies } from 'next/headers'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}))
+    console.log({ body })
     const { planId, quantity = 1 } = body as { planId?: string; quantity?: number }
+    console.log({ planId, quantity })
 
     if (!planId) {
       return NextResponse.json({ success: false, error: 'planId is required' }, { status: 400 })
@@ -23,7 +25,7 @@ export async function POST(req: NextRequest) {
     const payload = await configuredPayload()
 
     // Get cookies properly
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const headers = new Headers()
     headers.set('cookie', cookieStore.toString())
 
@@ -31,6 +33,7 @@ export async function POST(req: NextRequest) {
     const { user } = await payload.auth({
       headers,
     })
+    console.log({ user })
 
     if (!user || !user.id) {
       return NextResponse.json(
@@ -45,6 +48,7 @@ export async function POST(req: NextRequest) {
         collection: 'plans', // adjust collection name if different
         id: planId,
       })
+      console.log({ plan })
 
       if (!plan) {
         return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
@@ -62,8 +66,10 @@ export async function POST(req: NextRequest) {
       },
       limit: 1,
     })
+    console.log({ found })
 
     let cart = found?.docs?.[0] ?? null
+    console.log({ cart })
 
     if (!cart) {
       // Create a new cart with the item
@@ -83,6 +89,7 @@ export async function POST(req: NextRequest) {
 
     // Ensure items is an array
     const items = Array.isArray(cart.items) ? [...cart.items] : []
+    console.log({ items })
 
     // Find existing item with this plan
     const existingItemIndex = items.findIndex((item: any) => {
@@ -111,6 +118,7 @@ export async function POST(req: NextRequest) {
       id: cart.id,
       data: { items },
     })
+    console.log({ updated })
 
     return NextResponse.json({ success: true, cart: updated }, { status: 200 })
   } catch (err: any) {

@@ -1,4 +1,5 @@
 'use client'
+
 import { useLocale, useTranslations } from 'next-intl'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -19,40 +20,14 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
-
-interface LocalStorageCartItem {
-  planId: string
-  quantity: number
-  addedAt: string
-  plan: {
-    id: string
-    title: string
-    price: number
-    priceBeforeDiscount?: number
-    description: string
-    numberOfSubscriptions?: number
-    image?: {
-      id: string
-      url: string
-      alt: string
-      filename: string
-      width: number
-      height: number
-      mimeType: string
-    } | null
-    features?: any[]
-    downloadPlatforms?: any[]
-    reviews?: any[]
-    createdAt?: string
-    updatedAt?: string
-  }
-}
+import { useCart } from '@/modules/cart/hooks/use-cart'
 
 export default function SigninForm({ isCart }: { isCart?: boolean }) {
   const router = useRouter()
   const lang = useLocale()
   const queryClient = useQueryClient()
   const t = useTranslations()
+  const { items: guestCartItems, clearCart } = useCart()
 
   const formSchema = z.object({
     email: z.string().email(t('enterValidEmail') || 'Please enter a valid email'),
@@ -70,20 +45,12 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
 
   const [submitting, setSubmitting] = React.useState(false)
 
-  // Function to transfer localStorage cart to backend
+  // Transfer guest cart from Zustand store to backend
   const transferGuestCartToBackend = async (): Promise<boolean> => {
+    console.log('from transferGuestCartToBackend')
+    if (guestCartItems.length === 0) return true
+
     try {
-      const guestCart = localStorage.getItem('guestCart')
-      if (!guestCart) {
-        return true // No guest cart to transfer
-      }
-
-      const guestCartItems: LocalStorageCartItem[] = JSON.parse(guestCart)
-      if (guestCartItems.length === 0) {
-        return true // Empty guest cart
-      }
-
-      // Add each item from localStorage to the backend cart
       const transferPromises = guestCartItems.map(async (item) => {
         const response = await fetch('/api/cart/add', {
           method: 'POST',
@@ -95,8 +62,12 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
           }),
         })
 
+        console.log({ transferPromises })
+
         if (!response.ok) {
           const errorData = await response.json()
+          console.log({ errorData })
+
           console.error(`Failed to transfer item ${item.planId}:`, errorData)
           throw new Error(`Failed to transfer item: ${item.plan.title}`)
         }
@@ -104,23 +75,21 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
         return response.json()
       })
 
-      // Wait for all transfers to complete
       await Promise.all(transferPromises)
 
-      // Clear localStorage cart after successful transfer
-      localStorage.removeItem('guestCart')
+      // Clear guest cart from Zustand
+      clearCart()
 
-      // Dispatch event to update other components
+      // Notify other components
       window.dispatchEvent(new CustomEvent('guestCartUpdated'))
       await queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
       toast.success(`Transferred ${guestCartItems.length} item(s) to your account!`)
-
       return true
     } catch (error) {
       console.error('Error transferring guest cart:', error)
       toast.error('Failed to transfer some cart items. Please add them manually.')
-      return false // Don't fail the entire login process
+      return false
     }
   }
 
@@ -143,9 +112,10 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
 
       toast.success('Login successful!')
 
-      // Transfer guest cart items to backend after successful login
+      // Transfer guest cart items to backend
       await transferGuestCartToBackend()
       await queryClient.refetchQueries({ queryKey: ['/cart', lang] })
+
       // Small delay to ensure cart transfer completes
       await new Promise((resolve) => setTimeout(resolve, 500))
 
@@ -153,7 +123,7 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
         return router.refresh()
       }
       router.push('/cart')
-      router.refresh() // Refresh to update auth state
+      router.refresh() // Refresh auth state
     } catch (err) {
       console.error('Login error:', err)
       toast.error('Something went wrong')
@@ -165,11 +135,11 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
   return (
     <section
       className={cn(
-        'bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white ',
-        isCart ? 'w-fit min-w-96 max-w-full ' : 'w-full',
+        'bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white',
+        isCart ? 'w-fit min-w-96 max-w-full' : 'w-full',
       )}
     >
-      <div className={cn('h-auto my-auto flex gap-5 sm:gap-10', isCart ? '' : ' flex-col ')}>
+      <div className={cn('h-auto my-auto flex gap-5 sm:gap-10', isCart ? '' : 'flex-col')}>
         {!isCart && <h1 className="font-bold text-3xl lg:text-5xl">{t('signin') || 'Sign In'}</h1>}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -212,12 +182,14 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
                 </FormItem>
               )}
             />
+
             <div className="flex items-center text-xs text-muted gap-1">
               <p>{t('dontHaveAccount')}</p>
               <Link href={'/signup'} className="hover:underline hover:text-primary">
                 <span>{t('createAccount')}</span>
               </Link>
             </div>
+
             <Button
               variant="outline"
               type="submit"

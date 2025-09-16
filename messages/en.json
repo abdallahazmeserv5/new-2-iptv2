@@ -90,5 +90,7 @@
   "guestMode": "Guest Mode",
   "alreadyHaveAccount": "Already have an account",
   "log": "Log in",
-  "loginSucess": "Login successful!"
+  "loginSucess": "Login successful!",
+  "savedOnCart": "Saved on cart",
+  "addToCartGuestMode": "Added to cart (guest mode)"
 }

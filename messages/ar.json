@@ -91,5 +91,7 @@
   "guestMode": "الزائر",
   "alreadyHaveAccount": "لديك حساب بالفعل",
   "log": "سجل الدخول",
-  "loginSucess": "تسجيل الدخول بنجاح"
+  "loginSucess": "تسجيل الدخول بنجاح",
+  "savedOnCart": "تم الحفظ في السلة",
+  "addToCartGuestMode": "تم الإضافة في السلة (وضع الزائر)"
 }

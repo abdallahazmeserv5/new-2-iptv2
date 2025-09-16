@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
+import { useCart } from '@/modules/cart/hooks/use-cart' // Import the useCart hook
 
 interface CartItem {
   id: string
@@ -18,28 +19,6 @@ interface CartItem {
   quantity: number
 }
 
-interface LocalStorageCartItem {
-  planId: string
-  quantity: number
-  addedAt: string
-  plan: {
-    id: string
-    title: string
-    price: number
-    priceBeforeDiscount?: number
-    description: string
-    image?: {
-      id: string
-      url: string
-      alt: string
-      filename: string
-      width: number
-      height: number
-      mimeType: string
-    } | null
-  }
-}
-
 interface Props {
   cartItems: CartItem[]
   cartId: string
@@ -47,42 +26,18 @@ interface Props {
 }
 
 export default function CartItems({ cartItems, cartId, user }: Props) {
-  const [guestCart, setGuestCart] = useState<LocalStorageCartItem[]>([])
   const [isClient, setIsClient] = useState(false)
   const [updatingItemIds, setUpdatingItemIds] = useState<string[]>([])
   const t = useTranslations()
   const queryClient = useQueryClient()
   const lang = useLocale()
 
+  // Use the cart hook for guest cart management
+  const { items: guestCartItems, updateItemQuantity, removeFromCart } = useCart()
+
   useEffect(() => {
     setIsClient(true)
-    if (!user?.id) {
-      try {
-        const storedCart = localStorage.getItem('guestCart')
-        if (storedCart) setGuestCart(JSON.parse(storedCart))
-      } catch {
-        setGuestCart([])
-      }
-    }
-  }, [user?.id])
-
-  useEffect(() => {
-    if (!user?.id && isClient) {
-      const handleStorageChange = () => {
-        const storedCart = localStorage.getItem('guestCart')
-        if (storedCart) setGuestCart(JSON.parse(storedCart))
-        else setGuestCart([])
-      }
-
-      window.addEventListener('storage', handleStorageChange)
-      window.addEventListener('guestCartUpdated', handleStorageChange)
-
-      return () => {
-        window.removeEventListener('storage', handleStorageChange)
-        window.removeEventListener('guestCartUpdated', handleStorageChange)
-      }
-    }
-  }, [user?.id, isClient])
+  }, [])
 
   const mutation = useMutation({
     mutationFn: async ({ itemId, quantity }: { itemId: string; quantity: number }) => {
@@ -100,38 +55,47 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
       if (!res.ok) throw new Error(await res.text())
       return res.json()
     },
-    onSettled: () => {
+    onMutate: ({ itemId }) => {
+      // Add item to updating list when mutation starts
+      setUpdatingItemIds((prev) => [...prev, itemId])
+    },
+    onSettled: (data, error, { itemId }) => {
+      // Remove item from updating list when mutation completes
+      setUpdatingItemIds((prev) => prev.filter((id) => id !== itemId))
       queryClient.refetchQueries({ queryKey: ['/cart', lang] })
     },
   })
 
   const handleUpdate = (itemId: string, newQuantity: number) => {
     if (updatingItemIds.includes(itemId)) return
+
+    if (newQuantity < 1) {
+      handleRemove(itemId)
+      return
+    }
+
     mutation.mutate({ itemId, quantity: newQuantity })
   }
 
   const handleGuestUpdate = (planId: string, newQuantity: number) => {
-    if (newQuantity < 1) return handleGuestRemove(planId)
-    const updatedCart = guestCart.map((item) =>
-      item.planId === planId ? { ...item, quantity: newQuantity } : item,
-    )
-    setGuestCart(updatedCart)
-    localStorage.setItem('guestCart', JSON.stringify(updatedCart))
-    window.dispatchEvent(new CustomEvent('guestCartUpdated'))
-    toast.success('Cart updated')
+    if (newQuantity < 1) {
+      removeFromCart(planId)
+      toast.success('Item removed from cart')
+    } else {
+      updateItemQuantity(planId, newQuantity)
+      toast.success('Cart updated')
+    }
   }
 
   const handleGuestRemove = (planId: string) => {
-    const updatedCart = guestCart.filter((item) => item.planId !== planId)
-    setGuestCart(updatedCart)
-    localStorage.setItem('guestCart', JSON.stringify(updatedCart))
-    window.dispatchEvent(new CustomEvent('guestCartUpdated'))
+    removeFromCart(planId)
     toast.success('Item removed from cart')
   }
 
   const handleRemove = (itemId: string) => handleUpdate(itemId, 0)
 
-  const itemsToDisplay = user?.id ? cartItems : guestCart
+  // Use guest cart items from the hook instead of local state
+  const itemsToDisplay = user?.id ? cartItems : guestCartItems
   const hasItems = itemsToDisplay.length > 0
 
   if (!isClient) return <div className="text-white">{t('loadingCart')}</div>
@@ -161,12 +125,12 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
         return (
           <div
             key={itemKey}
-            className="bg-[#151515] flex items-start sm:items-center gap-2 p-3 rounded-2xl border border-[#262626]"
+            className="bg-[#151515] flex items-start sm:items-center gap-2 p-3 rounded-2xl border border-[#262626] w-full"
           >
             <ImageFallBack
               width={103}
               height={109}
-              className="w-20 h-20 sm:w-[103px] sm:h-[109px]"
+              className="w-20 h-20 sm:w-[103px] sm:h-[109px] flex-shrink-0"
               src={img || ''}
               alt={title}
             />
@@ -192,48 +156,57 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
                 )}
               </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  className="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 text-white disabled:opacity-50 hidden"
-                  disabled={isUpdating}
-                  onClick={() => {
-                    isGuestItem
-                      ? handleGuestUpdate(item.planId, quantity - 1)
-                      : handleUpdate(item.id, quantity - 1)
-                  }}
-                >
-                  -
-                </button>
-                <span className="text-white font-medium hidden">
-                  {quantity} {isUpdating && <span className="ml-1 animate-pulse">⏳</span>}
-                </span>
-                <button
-                  className="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 text-white disabled:opacity-50 hidden"
-                  disabled={isUpdating}
-                  onClick={() => {
-                    isGuestItem
-                      ? handleGuestUpdate(item.planId, quantity + 1)
-                      : handleUpdate(item.id, quantity + 1)
-                  }}
-                >
-                  +
-                </button>
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* Quantity Controls */}
+                <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-1">
+                  <button
+                    className="w-8 h-8 flex items-center justify-center bg-gray-700 rounded hover:bg-gray-600 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    disabled={isUpdating || quantity <= 1}
+                    onClick={() => {
+                      if (isGuestItem) {
+                        handleGuestUpdate(item.planId, quantity - 1)
+                      } else {
+                        handleUpdate(item.id, quantity - 1)
+                      }
+                    }}
+                  >
+                    -
+                  </button>
 
-                {isGuestItem ? (
+                  <span className="text-white font-medium min-w-[2rem] text-center">
+                    {quantity}
+                    {isUpdating && <span className="ml-1 animate-pulse">⏳</span>}
+                  </span>
+
                   <button
-                    className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 text-white ml-2"
-                    onClick={() => handleGuestRemove(item.planId)}
+                    className="w-8 h-8 flex items-center justify-center bg-gray-700 rounded hover:bg-gray-600 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    disabled={isUpdating}
+                    onClick={() => {
+                      if (isGuestItem) {
+                        handleGuestUpdate(item.planId, quantity + 1)
+                      } else {
+                        handleUpdate(item.id, quantity + 1)
+                      }
+                    }}
                   >
-                    {t('remove')}
+                    +
                   </button>
-                ) : (
-                  <button
-                    className="px-3 py-1 hidden bg-red-600 rounded hover:bg-red-700 text-white ml-2"
-                    onClick={() => handleRemove(item.id)}
-                  >
-                    {t('remove')}
-                  </button>
-                )}
+                </div>
+
+                {/* Remove Button */}
+                <button
+                  className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 text-white transition-colors disabled:opacity-50"
+                  disabled={isUpdating}
+                  onClick={() => {
+                    if (isGuestItem) {
+                      handleGuestRemove(item.planId)
+                    } else {
+                      handleRemove(item.id)
+                    }
+                  }}
+                >
+                  {t('remove')}
+                </button>
               </div>
             </div>
           </div>
