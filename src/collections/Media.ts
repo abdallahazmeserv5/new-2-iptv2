@@ -3,6 +3,13 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  hooks: {
+    afterChange: [
+      ({ doc }) => {
+        console.log({ doc })
+      },
+    ],
+  },
   access: {
     create: isAdmin,
     read: () => true,
@@ -15,16 +22,8 @@ export const Media: CollectionConfig = {
       type: 'text',
       required: true,
       localized: true,
-      label: {
-        en: 'Alt Text',
-        ar: 'النص البديل',
-      },
     },
   ],
-  upload: {
-    mimeTypes: ['image/*'],
-  },
-  admin: {
-    useAsTitle: 'alt',
-  },
+  upload: true,
+  admin: { useAsTitle: 'alt' },
 }

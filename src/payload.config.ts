@@ -22,7 +22,6 @@ import { Cart } from './collections/Cart'
 import { Orders } from './collections/Order'
 import { Users } from './collections/Users'
 import { Pages } from './collections/Pages'
-// import { Admins } from './collections/Admins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -104,7 +103,10 @@ export default buildConfig({
     vercelBlobStorage({
       enabled: true,
       collections: {
-        media: true,
+        media: {
+          disableLocalStorage: true,
+          disablePayloadAccessControl: true,
+        },
       },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     }),

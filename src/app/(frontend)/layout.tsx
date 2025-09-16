@@ -10,6 +10,7 @@ import { cookies } from 'next/headers'
 import React from 'react'
 import Providers from './providers'
 import './styles.css'
+import { baseFetch } from '@/actions/fetch'
 
 export const metadata = {
   description: 'Best site to watch the latest movies.',
@@ -50,6 +51,23 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
         }),
     }),
   ])
+
+  const response = await baseFetch({
+    externalApi: true,
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + process.env.MYFATOORAH_API_KEY,
+      'Content-Type': 'application/json',
+    },
+    url: process.env.MYFATOORAH_BASE_URL + '/v2/InitiatePayment',
+    body: {
+      InvoiceAmount: 100,
+      CurrencyIso: 'KWD',
+    },
+  })
+
+  console.log({ response })
 
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (
