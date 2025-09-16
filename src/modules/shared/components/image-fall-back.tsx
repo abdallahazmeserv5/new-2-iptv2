@@ -17,11 +17,5 @@ export default function ImageFallBack({
   height,
   ...rest
 }: ImageFallBackProps) {
-  let finalSrc = src
-  if (src.startsWith('/api/media/file/')) {
-    const filename = src.replace('/api/media/file/', '')
-    finalSrc = `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/media/${filename}`
-  }
-
-  return <Image src={finalSrc} alt={alt || ''} width={width} height={height} {...rest} />
+  return <Image src={src} alt={alt || ''} width={width} height={height} {...rest} />
 }

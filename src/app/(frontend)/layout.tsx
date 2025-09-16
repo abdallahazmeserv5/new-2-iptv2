@@ -1,16 +1,15 @@
 import { configuredPayload } from '@/actions'
+import { Toaster } from '@/components/ui/sonner'
+import Footer from '@/modules/shared/components/footer'
 import Navbar from '@/modules/shared/components/navbar/navbar'
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
+import { cookies } from 'next/headers'
 import React from 'react'
 import Providers from './providers'
 import './styles.css'
-import Footer from '@/modules/shared/components/footer'
-import { Toaster } from '@/components/ui/sonner'
-import { cookies, headers } from 'next/headers'
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { baseFetch } from '@/actions/fetch'
 
 export const metadata = {
   description: 'Best site to watch the latest movies.',

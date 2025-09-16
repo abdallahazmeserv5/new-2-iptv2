@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { en } from '@payloadcms/translations/languages/en'
 import { ar } from '@payloadcms/translations/languages/ar'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 import { Media } from './collections/Media'
 import { Settings } from './globals/Settings'
@@ -39,7 +40,7 @@ export default buildConfig({
       ],
     },
   },
-  // Allow browser requests from your Next.js app (dev)
+
   cors: [
     process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL,
     'http://localhost:3000',
@@ -99,5 +100,13 @@ export default buildConfig({
   }),
   sharp,
 
-  plugins: [payloadCloudPlugin()],
+  plugins: [
+    vercelBlobStorage({
+      enabled: true,
+      collections: {
+        media: true,
+      },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  ],
 })

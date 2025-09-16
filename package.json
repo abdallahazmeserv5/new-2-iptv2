@@ -23,6 +23,7 @@
     "@payloadcms/next": "3.54.0",
     "@payloadcms/payload-cloud": "3.54.0",
     "@payloadcms/richtext-lexical": "3.54.0",
+    "@payloadcms/storage-vercel-blob": "3.54",
     "@payloadcms/translations": "^3.54.0",
     "@payloadcms/ui": "3.54.0",
     "@radix-ui/react-accordion": "^1.2.12",
