@@ -58,6 +58,10 @@ export default function PaymentSuccessPage() {
     )
   }
 
+  // because of first state showing the empty invoice
+  if (paymentId && !order) {
+    return null
+  }
   return (
     <div className="flex flex-col items-center justify-center bg-[#151515] text-white p-5">
       <h1 className="text-3xl sm:text-4xl font-bold text-green-400 mb-4">{t('successPayment')}</h1>
