@@ -22,6 +22,8 @@ import { Cart } from './collections/Cart'
 import { Orders } from './collections/Order'
 import { Users } from './collections/Users'
 import { Pages } from './collections/Pages'
+import { PaymentMethods } from './collections/PaymentMethods'
+import { Features } from './collections/Features'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -68,6 +70,8 @@ export default buildConfig({
     Cart,
     Orders,
     Pages,
+    PaymentMethods,
+    Features,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

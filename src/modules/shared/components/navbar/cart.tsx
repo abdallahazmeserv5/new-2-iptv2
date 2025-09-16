@@ -17,11 +17,13 @@ import Link from 'next/link'
 import { baseFetch } from '@/actions/fetch'
 import { useUser } from '../../hooks/use-user'
 import { useCart } from '@/modules/cart/hooks/use-cart'
+import { usePathname } from 'next/navigation'
 
 export default function Cart() {
   const { user } = useUser()
   const t = useTranslations()
   const lang = useLocale()
+  const pathname = usePathname()
   const {
     items: guestCartItems,
     totalItems: guestTotalQuantity,
@@ -32,34 +34,42 @@ export default function Cart() {
   const [isClient, setIsClient] = useState(false)
   useEffect(() => setIsClient(true), [])
 
+  // Dropdown open state
+  const [open, setOpen] = useState(false)
+
+  // Close dropdown when visiting /cart
+  useEffect(() => {
+    if (pathname === '/cart') {
+      setOpen(false)
+    }
+  }, [pathname])
+
   // Fetch authenticated user's cart
-  const { data: authCart } = useQuery({
+  const { data: rawAuthCart } = useQuery({
     queryKey: ['/cart', lang],
     queryFn: async () => {
       if (!user?.id) return { items: [] }
       const data = await baseFetch({
-        url: `/api/carts?where[user][equals]=${user.id}&limit=1`,
+        url: `/api/carts`,
       })
-      return data?.docs?.[0] || { items: [] }
+      return data // keep raw data for normalization
     },
     enabled: !!user?.id,
   })
 
   if (!isClient) return null // Prevent hydration issues
 
+  // Normalize authCart: always use the first cart from docs if present
+  const authCart = rawAuthCart?.docs?.[0] || rawAuthCart || { items: [] }
+
   // Decide which cart to display
   const cartItems = user?.id ? authCart?.items || [] : guestCartItems || []
 
-  const totalQuantity = user?.id
-    ? cartItems.reduce((acc, i) => acc + i.quantity, 0)
-    : guestTotalQuantity
-
-  const totalPrice = user?.id
-    ? cartItems.reduce((acc, i) => acc + i.quantity * i.plan.price, 0)
-    : guestTotalPrice
+  const totalQuantity = cartItems.reduce((acc, i) => acc + (i.quantity || 0), 0)
+  const totalPrice = cartItems.reduce((acc, i) => acc + (i.quantity || 0) * (i.plan?.price || 0), 0)
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="relative border-none">
           <ShoppingCart className="text-white" />

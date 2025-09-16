@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation'
 import { baseFetch } from '@/actions/fetch'
 import PrimaryButton from '@/modules/shared/components/primary-button'
 import { useCart } from '@/modules/cart/hooks/use-cart'
+import AddToCartButtons from '@/modules/shared/components/add-to-cart-buttons'
 
 interface HeroProps {
   plans: PaginatedDocs<Plan>
@@ -63,7 +64,9 @@ export default function Plans({ plans }: HeroProps) {
       const data = await baseFetch({
         url: '/api/cart/add',
         method: 'POST',
-        body: { planId, quantity: 1 },
+        body: {
+          items: [{ planId, quantity: 1 }], // send as array to match new route
+        },
       })
 
       if (!data || data?.error) {
@@ -74,8 +77,8 @@ export default function Plans({ plans }: HeroProps) {
       // ✅ Refetch cart so UI updates
       queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
-      toast.success(t(''), {
-        duration: Infinity, // keeps toast visible
+      toast.success('Added to cart!', {
+        duration: 3000,
       })
     } catch (err) {
       console.error(err)
@@ -111,7 +114,6 @@ export default function Plans({ plans }: HeroProps) {
     } else {
       addToLocalStorage(planId)
     }
-    return
     router.push('/cart')
   }
 
@@ -180,13 +182,7 @@ export default function Plans({ plans }: HeroProps) {
                     ))}
                   </ul>
 
-                  <PrimaryButton
-                    className="flex gap-2 items-center justify-center"
-                    onClick={() => addToCart(slideItem.id)}
-                  >
-                    <ArrowUpRight className="text-[#9EFF3E] " />
-                    {t('subscripeInPlan')}
-                  </PrimaryButton>
+                  <AddToCartButtons plan={slideItem} />
                 </CarouselItem>
               )
             })}
@@ -243,13 +239,7 @@ export default function Plans({ plans }: HeroProps) {
                 {slideItem.duration} {t('monthes')}
               </p>
 
-              <PrimaryButton
-                className="flex gap-2 items-center justify-center"
-                onClick={() => addToCart(slideItem.id)}
-              >
-                <ArrowUpRight className="text-[#9EFF3E] hidden sm:block " />
-                {t('subscripeInPlan')}
-              </PrimaryButton>
+              <AddToCartButtons plan={slideItem} />
             </Link>
           )
         })}

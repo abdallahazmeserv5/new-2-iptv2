@@ -1,28 +1,7 @@
+import { Media, Plan } from '@/payload-types'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-// Define the Plan type based on your Payload schema
-export interface Plan {
-  id: string
-  title: string
-  price: number
-  priceBeforeDiscount?: number
-  image?: {
-    id?: string
-    url?: string
-    alt?: string
-  }
-  description: string
-  numberOfSubscriptions: number
-  features?: Array<{ id?: string; feature: string }>
-  downloadPlatforms?: Array<any>
-  reviews?: Array<any>
-  duration: number
-  createdAt?: string
-  updatedAt?: string
-}
-
-// Define cart item type to match your existing structure
 export interface CartItem {
   planId: string
   quantity: number
@@ -104,12 +83,7 @@ export const useCartStore = create<CartStore>()(
                 priceBeforeDiscount: plan.priceBeforeDiscount,
                 description: plan.description,
                 numberOfSubscriptions: plan.numberOfSubscriptions,
-                image: plan.image
-                  ? {
-                      url: plan.image.url,
-                      alt: plan.image.alt,
-                    }
-                  : undefined,
+                image: plan.image as Media,
                 features: plan.features || [],
                 downloadPlatforms: plan.downloadPlatforms || [],
                 reviews: plan.reviews || [],

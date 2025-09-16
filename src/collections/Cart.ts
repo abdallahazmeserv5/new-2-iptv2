@@ -39,7 +39,7 @@ export const Cart: CollectionConfig = {
           type: 'number',
           required: true,
           defaultValue: 1,
-          min: 1,
+          min: 0,
         },
       ],
     },

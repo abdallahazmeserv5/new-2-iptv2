@@ -8,7 +8,7 @@ export default async function Page() {
   const t = await getTranslations()
   const payload = await configuredPayload()
 
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const headers = new Headers()
   headers.set('cookie', cookieStore.toString())
 

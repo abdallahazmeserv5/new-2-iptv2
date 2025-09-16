@@ -1,39 +1,27 @@
 // src/app/api/cart/add/route.ts
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { configuredPayload } from '@/actions' // use your helper that returns a payload instance
+import { configuredPayload } from '@/actions' // helper returning Payload instance
 import { cookies } from 'next/headers'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}))
-    console.log({ body })
-    const { planId, quantity = 1 } = body as { planId?: string; quantity?: number }
-    console.log({ planId, quantity })
+    const { items: newItems } = body as { items?: { planId: string; quantity: number }[] }
 
-    if (!planId) {
-      return NextResponse.json({ success: false, error: 'planId is required' }, { status: 400 })
-    }
-
-    if (quantity < 1) {
-      return NextResponse.json(
-        { success: false, error: 'quantity must be at least 1' },
-        { status: 400 },
-      )
+    if (!newItems || newItems.length === 0) {
+      return NextResponse.json({ success: false, error: 'No items provided' }, { status: 400 })
     }
 
     const payload = await configuredPayload()
 
-    // Get cookies properly
+    // Get cookies for authentication
     const cookieStore = await cookies()
     const headers = new Headers()
     headers.set('cookie', cookieStore.toString())
 
-    // Get the current user from Payload (v3)
-    const { user } = await payload.auth({
-      headers,
-    })
-    console.log({ user })
+    // Get current user
+    const { user } = await payload.auth({ headers })
 
     if (!user || !user.id) {
       return NextResponse.json(
@@ -42,114 +30,88 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Verify the plan exists first
-    try {
-      const plan = await payload.findByID({
-        collection: 'plans', // adjust collection name if different
-        id: planId,
-      })
-      console.log({ plan })
-
-      if (!plan) {
-        return NextResponse.json({ success: false, error: 'Plan not found' }, { status: 404 })
-      }
-    } catch (planError) {
-      console.error('Plan verification error:', planError)
-      return NextResponse.json({ success: false, error: 'Invalid plan ID' }, { status: 404 })
-    }
-
-    // 1) Look for existing cart for this user
+    // Get existing cart
     const found = await payload.find({
       collection: 'carts',
-      where: {
-        user: { equals: user.id },
-      },
+      where: { user: { equals: user.id } },
       limit: 1,
     })
-    console.log({ found })
 
     let cart = found?.docs?.[0] ?? null
-    console.log({ cart })
 
     if (!cart) {
-      // Create a new cart with the item
+      // Filter out items with quantity <= 0 when creating new cart
+      const validItems = newItems
+        .filter((item) => item.quantity > 0)
+        .map((i) => ({ plan: i.planId, quantity: i.quantity }))
 
+      if (validItems.length === 0) {
+        return NextResponse.json(
+          { success: true, message: 'No valid items to add' },
+          { status: 200 },
+        )
+      }
+
+      // Create cart with valid items only
       const created = await payload.create({
         collection: 'carts',
         data: {
           user: user.id,
-          items: [{ plan: planId, quantity }],
+          items: validItems,
         },
       })
-
       return NextResponse.json({ success: true, cart: created }, { status: 201 })
     }
 
-    // Cart exists -> update items
+    // Merge with existing items
+    const existingItems = Array.isArray(cart.items) ? [...cart.items] : []
 
-    // Ensure items is an array
-    const items = Array.isArray(cart.items) ? [...cart.items] : []
-    console.log({ items })
+    for (const newItem of newItems) {
+      const idx = existingItems.findIndex(
+        (item) =>
+          String(typeof item.plan === 'object' ? item.plan?.id : item.plan) ===
+          String(newItem.planId),
+      )
 
-    // Find existing item with this plan
-    const existingItemIndex = items.findIndex((item: any) => {
-      // Handle both populated and non-populated plan references
-      const itemPlanId = typeof item.plan === 'object' ? item.plan?.id : item.plan
-      return String(itemPlanId) === String(planId)
-    })
+      if (idx > -1) {
+        // Update existing item quantity
+        const newQuantity = (existingItems[idx].quantity || 0) + newItem.quantity
 
-    if (existingItemIndex > -1) {
-      // Increment existing item quantity
-      const currentQuantity = Number(items[existingItemIndex].quantity) || 0
-      const newQuantity = currentQuantity + Number(quantity)
-
-      items[existingItemIndex] = {
-        ...items[existingItemIndex],
-        quantity: newQuantity,
+        if (newQuantity <= 0) {
+          // Remove item if quantity becomes 0 or negative
+          existingItems.splice(idx, 1)
+        } else {
+          // Update quantity
+          existingItems[idx].quantity = newQuantity
+        }
+      } else if (newItem.quantity > 0) {
+        // Only add new item if quantity is positive
+        existingItems.push({ plan: newItem.planId, quantity: newItem.quantity })
       }
-    } else {
-      // Add new item
-      items.push({ plan: planId, quantity: Number(quantity) })
     }
 
-    // Update the cart
+    // If no items left, delete the cart
+    if (existingItems.length === 0) {
+      await payload.delete({
+        collection: 'carts',
+        id: cart.id,
+      })
+      return NextResponse.json(
+        { success: true, message: 'Cart emptied and removed' },
+        { status: 200 },
+      )
+    }
+
+    // Update the cart with filtered items
     const updated = await payload.update({
       collection: 'carts',
       id: cart.id,
-      data: { items },
+      data: { items: existingItems },
     })
-    console.log({ updated })
 
     return NextResponse.json({ success: true, cart: updated }, { status: 200 })
   } catch (err: any) {
     console.error('Add to cart error:', err)
-
-    if (err.name === 'ValidationError') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Validation error: ' + (err.message || 'Invalid data'),
-        },
-        { status: 400 },
-      )
-    }
-
-    if (err.name === 'NotFoundError') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Resource not found',
-        },
-        { status: 404 },
-      )
-    }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Internal server error',
-      },
-      { status: 500 },
-    )
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
   }
 }

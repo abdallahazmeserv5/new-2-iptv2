@@ -19,14 +19,9 @@ export const metadata = {
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
+
   const lang = await getLocale()
-
   const payload = await configuredPayload()
-
-  const settings = await payload.findGlobal({
-    slug: 'settings',
-  })
-
   const cookieStore = await cookies()
 
   // Turn them into a header
@@ -36,10 +31,11 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   })
 
   const queryClient = new QueryClient()
-  const [user, pages] = await Promise.all([
+  const [user, pages, settings] = await Promise.all([
     queryClient.fetchQuery({
       queryKey: ['/me'],
       queryFn: async () => await payload.auth({ headers }),
+      staleTime: Infinity,
     }),
     queryClient.fetchQuery({
       queryKey: ['/pages', lang],
@@ -49,23 +45,34 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
           where: {},
           pagination: false,
         }),
+      staleTime: Infinity,
+    }),
+    queryClient.fetchQuery({
+      queryKey: ['/settings', lang],
+      queryFn: async () =>
+        await payload.findGlobal({
+          slug: 'settings',
+        }),
+      staleTime: Infinity,
     }),
   ])
 
-  const response = await baseFetch({
-    externalApi: true,
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      Authorization: 'Bearer ' + process.env.MYFATOORAH_API_KEY,
-      'Content-Type': 'application/json',
-    },
-    url: process.env.MYFATOORAH_BASE_URL + '/v2/InitiatePayment',
-    body: {
-      InvoiceAmount: 100,
-      CurrencyIso: 'KWD',
-    },
-  })
+  // const response = await baseFetch({
+  //   externalApi: true,
+  //   method: 'POST',
+  //   headers: {
+  //     Accept: 'application/json',
+  //     Authorization: 'Bearer ' + process.env.MYFATOORAH_API_KEY,
+  //     'Content-Type': 'application/json',
+  //   },
+  //   url: process.env.MYFATOORAH_BASE_URL + '/v2/InitiatePayment',
+  //   body: {
+  //     InvoiceAmount: 100,
+  //     CurrencyIso: 'KWD',
+  //   },
+  // })
+
+  // console.log({ response })
 
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (

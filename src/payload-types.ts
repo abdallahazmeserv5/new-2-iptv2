@@ -78,6 +78,8 @@ export interface Config {
     carts: Cart;
     orders: Order;
     pages: Page;
+    'payment-methods': PaymentMethod;
+    features: Feature;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -95,6 +97,8 @@ export interface Config {
     carts: CartsSelect<false> | CartsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    'payment-methods': PaymentMethodsSelect<false> | PaymentMethodsSelect<true>;
+    features: FeaturesSelect<false> | FeaturesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -377,6 +381,33 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment-methods".
+ */
+export interface PaymentMethod {
+  id: string;
+  PaymentMethodId: number;
+  PaymentMethodAr: string;
+  PaymentMethodEn: string;
+  PaymentMethodCode: string;
+  image: string | Media;
+  IsDirectPayment: boolean;
+  active: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "features".
+ */
+export interface Feature {
+  id: string;
+  image: string | Media;
+  title: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -425,6 +456,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'payment-methods';
+        value: string | PaymentMethod;
+      } | null)
+    | ({
+        relationTo: 'features';
+        value: string | Feature;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -659,6 +698,31 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment-methods_select".
+ */
+export interface PaymentMethodsSelect<T extends boolean = true> {
+  PaymentMethodId?: T;
+  PaymentMethodAr?: T;
+  PaymentMethodEn?: T;
+  PaymentMethodCode?: T;
+  image?: T;
+  IsDirectPayment?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "features_select".
+ */
+export interface FeaturesSelect<T extends boolean = true> {
+  image?: T;
+  title?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -706,6 +770,14 @@ export interface Setting {
     | null;
   abandonAfterMinutes: number;
   messageIntervalMinutes: number;
+  /**
+   * Enter WhatsApp number with country code (e.g., +966501234567)
+   */
+  whatsappNumber?: string | null;
+  /**
+   * Enter your MyFatoorah API key for payment processing
+   */
+  myfatoorahApiKey?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -725,6 +797,8 @@ export interface SettingsSelect<T extends boolean = true> {
       };
   abandonAfterMinutes?: T;
   messageIntervalMinutes?: T;
+  whatsappNumber?: T;
+  myfatoorahApiKey?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

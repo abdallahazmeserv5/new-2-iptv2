@@ -21,6 +21,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCart } from '@/modules/cart/hooks/use-cart'
+import { baseFetch } from '@/actions/fetch'
 
 export default function SigninForm({ isCart }: { isCart?: boolean }) {
   const router = useRouter()
@@ -47,40 +48,22 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
 
   // Transfer guest cart from Zustand store to backend
   const transferGuestCartToBackend = async (): Promise<boolean> => {
-    console.log('from transferGuestCartToBackend')
     if (guestCartItems.length === 0) return true
 
     try {
-      const transferPromises = guestCartItems.map(async (item) => {
-        const response = await fetch('/api/cart/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            planId: item.planId,
-            quantity: item.quantity,
-          }),
-        })
-
-        console.log({ transferPromises })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.log({ errorData })
-
-          console.error(`Failed to transfer item ${item.planId}:`, errorData)
-          throw new Error(`Failed to transfer item: ${item.plan.title}`)
-        }
-
-        return response.json()
+      // Use baseFetch instead of fetch
+      const response = await baseFetch({
+        url: '/api/cart/add',
+        method: 'POST',
+        body: { items: guestCartItems },
       })
 
-      await Promise.all(transferPromises)
+      if (!response) {
+        throw new Error('Failed to transfer guest cart')
+      }
 
-      // Clear guest cart from Zustand
+      // Clear guest cart
       clearCart()
-
-      // Notify other components
       window.dispatchEvent(new CustomEvent('guestCartUpdated'))
       await queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
@@ -97,16 +80,15 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
     setSubmitting(true)
 
     try {
-      const res = await fetch('/api/users/login', {
+      // Replace fetch with baseFetch
+      const data = await baseFetch({
+        url: '/api/users/login',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: values,
       })
 
-      const data = await res.json()
-
-      if (!res.ok) {
-        toast.error(data.error || 'Login failed')
+      if (!data) {
+        toast.error('Login failed')
         return
       }
 
@@ -116,14 +98,7 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
       await transferGuestCartToBackend()
       await queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
-      // Small delay to ensure cart transfer completes
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      if (isCart) {
-        return router.refresh()
-      }
-      router.push('/cart')
-      router.refresh() // Refresh auth state
+      window.location.href = '/cart'
     } catch (err) {
       console.error('Login error:', err)
       toast.error('Something went wrong')

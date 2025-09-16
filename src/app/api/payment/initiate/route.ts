@@ -3,6 +3,8 @@ import type { Plan } from '@/payload-types'
 
 export async function POST(req: Request) {
   try {
+    // Parse request body to get payment method ID
+    const { paymentMethodId } = await req.json()
     // 1. Get current user
     const userRes = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/users/me`, {
       headers: {
@@ -77,16 +79,16 @@ export async function POST(req: Request) {
     }
 
     // 5. Call MyFatoorah to create payment link
-    const res = await fetch(`${process.env.MYFATOORAH_BASE_URL}/v2/SendPayment`, {
+    const res = await fetch(`${process.env.MYFATOORAH_BASE_URL}/v2/ExecutePayment`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${process.env.MYFATOORAH_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        NotificationOption: 'LNK',
         InvoiceValue: total,
         CustomerName: user.user.email || 'Guest',
+        PaymentMethodId: paymentMethodId, // single number
         CallBackUrl: `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/payment/success`,
         ErrorUrl: `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/payment/failed`,
         Language: 'en',
@@ -95,6 +97,7 @@ export async function POST(req: Request) {
     })
 
     const data = await res.json()
+
     // 6. Return payment link data
     return NextResponse.json(data)
   } catch (err) {

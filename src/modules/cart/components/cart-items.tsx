@@ -5,7 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { useCart } from '@/modules/cart/hooks/use-cart' // Import the useCart hook
+import { useCart } from '@/modules/cart/hooks/use-cart'
+import { Trash } from 'lucide-react'
 
 interface CartItem {
   id: string
@@ -25,9 +26,8 @@ interface Props {
   user?: any
 }
 
-export default function CartItems({ cartItems, cartId, user }: Props) {
+export default function CartItems({ cartItems, user }: Props) {
   const [isClient, setIsClient] = useState(false)
-  const [updatingItemIds, setUpdatingItemIds] = useState<string[]>([])
   const t = useTranslations()
   const queryClient = useQueryClient()
   const lang = useLocale()
@@ -39,42 +39,86 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
     setIsClient(true)
   }, [])
 
-  const mutation = useMutation({
-    mutationFn: async ({ itemId, quantity }: { itemId: string; quantity: number }) => {
-      const updatedItems = cartItems.map((item) =>
-        item.id === itemId ? { ...item, quantity } : item,
-      )
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/carts/${cartId}`, {
-        method: 'PATCH',
+  // Mutation for authenticated users using the new API route
+  const updateCartMutation = useMutation({
+    mutationFn: async ({ planId, quantity }: { planId: string; quantity: number }) => {
+      const res = await fetch('/api/cart/add', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ items: updatedItems }),
+        body: JSON.stringify({
+          items: [{ planId, quantity }],
+        }),
       })
 
-      if (!res.ok) throw new Error(await res.text())
+      if (!res.ok) {
+        const errorText = await res.text()
+        throw new Error(errorText || 'Failed to update cart')
+      }
+
       return res.json()
     },
-    onMutate: ({ itemId }) => {
-      // Add item to updating list when mutation starts
-      setUpdatingItemIds((prev) => [...prev, itemId])
-    },
-    onSettled: (data, error, { itemId }) => {
-      // Remove item from updating list when mutation completes
-      setUpdatingItemIds((prev) => prev.filter((id) => id !== itemId))
+    onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ['/cart', lang] })
+      toast.success('Cart updated successfully')
+    },
+    onError: (error) => {
+      console.error('Cart update error:', error)
+      toast.error('Failed to update cart')
     },
   })
 
-  const handleUpdate = (itemId: string, newQuantity: number) => {
-    if (updatingItemIds.includes(itemId)) return
+  // Mutation for removing items (setting quantity to 0)
+  const removeCartMutation = useMutation({
+    mutationFn: async ({
+      planId,
+      currentQuantity,
+    }: {
+      planId: string
+      currentQuantity: number
+    }) => {
+      // Send negative quantity to remove all of this item
+      const res = await fetch('/api/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          items: [{ planId, quantity: -currentQuantity }], // Negative quantity to remove all
+        }),
+      })
 
+      if (!res.ok) {
+        const errorText = await res.text()
+        throw new Error(errorText || 'Failed to remove item')
+      }
+
+      return res.json()
+    },
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ['/cart', lang] })
+      toast.success('Item removed from cart')
+    },
+    onError: (error) => {
+      console.error('Remove item error:', error)
+      toast.error('Failed to remove item')
+    },
+  })
+
+  const handleAuthenticatedUpdate = (
+    planId: string,
+    currentQuantity: number,
+    newQuantity: number,
+  ) => {
     if (newQuantity < 1) {
-      handleRemove(itemId)
-      return
+      removeCartMutation.mutate({ planId, currentQuantity })
+    } else {
+      const quantityDifference = newQuantity - currentQuantity
+      updateCartMutation.mutate({ planId, quantity: quantityDifference })
     }
+  }
 
-    mutation.mutate({ itemId, quantity: newQuantity })
+  const handleAuthenticatedRemove = (planId: string, currentQuantity: number) => {
+    removeCartMutation.mutate({ planId, currentQuantity })
   }
 
   const handleGuestUpdate = (planId: string, newQuantity: number) => {
@@ -92,13 +136,12 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
     toast.success('Item removed from cart')
   }
 
-  const handleRemove = (itemId: string) => handleUpdate(itemId, 0)
-
   // Use guest cart items from the hook instead of local state
   const itemsToDisplay = user?.id ? cartItems : guestCartItems
   const hasItems = itemsToDisplay.length > 0
 
   if (!isClient) return <div className="text-white">{t('loadingCart')}</div>
+
   if (!hasItems)
     return (
       <section className="bg-[#151515] flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border border-[#262626]">
@@ -108,24 +151,26 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
       </section>
     )
 
+  const isLoading = updateCartMutation.isPending || removeCartMutation.isPending
+
   return (
     <section className="bg-[#151515] flex flex-wrap items-start sm:items-center gap-4 sm:gap-6 p-3 rounded-2xl border border-[#262626] max-h-[500px] overflow-y-auto">
       {itemsToDisplay.map((item: any) => {
         const isGuestItem = !user?.id
         const itemKey = isGuestItem ? item.planId : item.id
         const { plan, quantity } = item
+        const planId = plan.id || item.planId
         const img = plan.image?.url
         const title = plan.title
         const price = plan.price * quantity
         const priceBeforeDiscount = plan.priceBeforeDiscount
           ? plan.priceBeforeDiscount * quantity
           : null
-        const isUpdating = updatingItemIds.includes(item.id)
 
         return (
           <div
             key={itemKey}
-            className="bg-[#151515] flex items-start sm:items-center gap-2 p-3 rounded-2xl border border-[#262626] w-full"
+            className="bg-[#151515] flex items-start sm:items-center gap-2 p-3 rounded-2xl border border-[#262626]  "
           >
             <ImageFallBack
               width={103}
@@ -161,31 +206,28 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
                 <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-1">
                   <button
                     className="w-8 h-8 flex items-center justify-center bg-gray-700 rounded hover:bg-gray-600 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    disabled={isUpdating || quantity <= 1}
+                    disabled={quantity <= 1 || isLoading}
                     onClick={() => {
                       if (isGuestItem) {
-                        handleGuestUpdate(item.planId, quantity - 1)
+                        handleGuestUpdate(planId, quantity - 1)
                       } else {
-                        handleUpdate(item.id, quantity - 1)
+                        handleAuthenticatedUpdate(planId, quantity, quantity - 1)
                       }
                     }}
                   >
                     -
                   </button>
 
-                  <span className="text-white font-medium min-w-[2rem] text-center">
-                    {quantity}
-                    {isUpdating && <span className="ml-1 animate-pulse">⏳</span>}
-                  </span>
+                  <span className="text-white px-2 min-w-[24px] text-center">{quantity}</span>
 
                   <button
                     className="w-8 h-8 flex items-center justify-center bg-gray-700 rounded hover:bg-gray-600 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    disabled={isUpdating}
+                    disabled={isLoading}
                     onClick={() => {
                       if (isGuestItem) {
-                        handleGuestUpdate(item.planId, quantity + 1)
+                        handleGuestUpdate(planId, quantity + 1)
                       } else {
-                        handleUpdate(item.id, quantity + 1)
+                        handleAuthenticatedUpdate(planId, quantity, quantity + 1)
                       }
                     }}
                   >
@@ -196,16 +238,16 @@ export default function CartItems({ cartItems, cartId, user }: Props) {
                 {/* Remove Button */}
                 <button
                   className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 text-white transition-colors disabled:opacity-50"
-                  disabled={isUpdating}
+                  disabled={isLoading}
                   onClick={() => {
                     if (isGuestItem) {
-                      handleGuestRemove(item.planId)
+                      handleGuestRemove(planId)
                     } else {
-                      handleRemove(item.id)
+                      handleAuthenticatedRemove(planId, quantity)
                     }
                   }}
                 >
-                  {t('remove')}
+                  <Trash />
                 </button>
               </div>
             </div>
