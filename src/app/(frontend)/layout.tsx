@@ -9,6 +9,7 @@ import { getLocale } from 'next-intl/server'
 import React from 'react'
 import Providers from './providers'
 import './styles.css'
+import WhatsAppFab from '@/modules/shared/components/whatsapp-fab'
 
 export const metadata = {
   description: 'Best site to watch the latest movies.',
@@ -53,6 +54,13 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
               <Navbar settings={settings} pages={pages} />
               <main className="flex-1"> {children}</main>
               <Footer settings={settings} pages={pages} />
+              <WhatsAppFab
+                number={
+                  (settings as any)?.whatsappNumber
+                    ? (settings as any).whatsappNumber.replace(/^\+/, '')
+                    : null
+                }
+              />
               <Toaster richColors closeButton />
             </body>
           </HydrationBoundary>

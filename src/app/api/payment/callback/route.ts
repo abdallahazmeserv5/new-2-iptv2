@@ -84,11 +84,8 @@ export async function POST(req: Request) {
     const itemsSummary = (order.items || [])
       .map((it: any) => `${it.plan?.title ?? it.plan} x${it.quantity}`)
       .join(', ')
-    console.log({ itemsSummary })
 
     const message = `شكرًا لك تم الشراء بنجاح رقم الطلب الخاص بك${order.id} %0A يمكنك الدخول علي الموقع وتقييم الخدمة`
-
-    console.log({ message })
 
     await sendMessage({ number: phone, message })
     sendMessage({ number: phone, message })
