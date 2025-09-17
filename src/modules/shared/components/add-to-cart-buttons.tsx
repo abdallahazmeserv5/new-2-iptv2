@@ -82,7 +82,7 @@ export default function AddToCartButtons({ plan }: { plan: Plan }) {
       onClick={() => addToCart(plan.id)}
     >
       <ArrowUpRight className="text-[#9EFF3E] " />
-      {t('subscripeInPlan')}
+      {t('subscripe')}
     </PrimaryButton>
   )
 }
