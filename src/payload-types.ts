@@ -108,9 +108,11 @@ export interface Config {
   };
   globals: {
     settings: Setting;
+    'private-data': PrivateDatum;
   };
   globalsSelect: {
     settings: SettingsSelect<false> | SettingsSelect<true>;
+    'private-data': PrivateDataSelect<false> | PrivateDataSelect<true>;
   };
   locale: 'en' | 'ar';
   user: User & {
@@ -191,7 +193,6 @@ export interface Media {
 export interface HeroSlide {
   id: string;
   mainImage: string | Media;
-  secondaryImage: string | Media;
   title: string;
   buttonText: string;
   /**
@@ -253,7 +254,6 @@ export interface Plan {
  */
 export interface Testimonial {
   id: string;
-  image: string | Media;
   reviewer: string;
   reviewerJob: string;
   review: string;
@@ -325,6 +325,7 @@ export interface Cart {
  */
 export interface Order {
   id: string;
+  userPhone?: string | null;
   /**
    * Visible only when order status is "Paid". Enter the message and save to send to the user.
    */
@@ -555,7 +556,6 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface HeroSlidesSelect<T extends boolean = true> {
   mainImage?: T;
-  secondaryImage?: T;
   title?: T;
   buttonText?: T;
   buttonUrl?: T;
@@ -615,7 +615,6 @@ export interface PlansSelect<T extends boolean = true> {
  * via the `definition` "testimonial_select".
  */
 export interface TestimonialSelect<T extends boolean = true> {
-  image?: T;
   reviewer?: T;
   reviewerJob?: T;
   review?: T;
@@ -666,6 +665,7 @@ export interface CartsSelect<T extends boolean = true> {
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
+  userPhone?: T;
   messageToUser?: T;
   user?: T;
   items?:
@@ -774,8 +774,17 @@ export interface Setting {
    * Enter WhatsApp number with country code (e.g., +966501234567)
    */
   whatsappNumber?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "private-data".
+ */
+export interface PrivateDatum {
+  id: string;
   /**
-   * Enter your MyFatoorah API key for payment processing
+   * Enter your MyFatoorah API key
    */
   myfatoorahApiKey?: string | null;
   updatedAt?: string | null;
@@ -798,6 +807,15 @@ export interface SettingsSelect<T extends boolean = true> {
   abandonAfterMinutes?: T;
   messageIntervalMinutes?: T;
   whatsappNumber?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "private-data_select".
+ */
+export interface PrivateDataSelect<T extends boolean = true> {
   myfatoorahApiKey?: T;
   updatedAt?: T;
   createdAt?: T;

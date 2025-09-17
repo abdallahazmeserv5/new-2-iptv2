@@ -1,6 +1,6 @@
 import { isAdmin } from '@/modules/payload/utils'
 import { CollectionConfig } from 'payload'
- 
+
 export const HeroSlides: CollectionConfig = {
   slug: 'hero-slides',
   labels: {
@@ -34,17 +34,17 @@ export const HeroSlides: CollectionConfig = {
         ar: 'الصورة الرئيسية',
       },
     },
-    {
-      name: 'secondaryImage',
-      type: 'upload',
-      relationTo: 'media',
-      required: true,
-      localized: true,
-      label: {
-        en: 'Secondary Image',
-        ar: 'الصورة الثانوية',
-      },
-    },
+    // {
+    //   name: 'secondaryImage',
+    //   type: 'upload',
+    //   relationTo: 'media',
+
+    //    localized: true,
+    //   label: {
+    //     en: 'Secondary Image',
+    //     ar: 'الصورة الثانوية',
+    //   },
+    // },
     {
       name: 'title',
       type: 'text',

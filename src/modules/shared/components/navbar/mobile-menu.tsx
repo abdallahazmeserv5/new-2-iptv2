@@ -7,7 +7,7 @@ import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 import Cart from './cart'
 
-export default function MobileMenu({ user }: { user: any }) {
+export default function MobileMenu() {
   const pathname = usePathname()
   const t = useTranslations()
 

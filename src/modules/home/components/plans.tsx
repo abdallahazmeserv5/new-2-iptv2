@@ -77,12 +77,12 @@ export default function Plans({ plans }: HeroProps) {
       // ✅ Refetch cart so UI updates
       queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
-      toast.success('Added to cart!', {
+      toast.success(t('cartUpdatedSuccessfully'), {
         duration: 3000,
       })
     } catch (err) {
       console.error(err)
-      toast.error('Something went wrong')
+      toast.error(t('somethingWentWrong'))
     }
   }
 
@@ -160,10 +160,10 @@ export default function Plans({ plans }: HeroProps) {
               return (
                 <CarouselItem
                   key={index}
-                  className="basis-[330px] sm:basis-[410px] shrink-0   bg-[#050505] p-8  rounded-2xl me-5 group  border-2 border-primary text-white h-auto flex flex-col gap-4 items-stretch  "
+                  className="basis-[330px] sm:basis-[410px] shrink-0   bg-[#050505] p-4  rounded-2xl me-5 group  border-2 border-primary text-white flex flex-col gap-4 items-stretch  "
                 >
                   <Link
-                    className="text-white font-medium text-2xl hover:text-primary"
+                    className="text-white font-medium text-2xl hover:text-primary text-center"
                     href={`/plans/${slideItem.id}`}
                   >
                     {slideItem.title}
@@ -171,7 +171,7 @@ export default function Plans({ plans }: HeroProps) {
                   <p className="flex gap-1 items-center font-medium text-2xl ">
                     <span className="text-primary">{slideItem.price}</span> {t('ryalPerMonth')}
                   </p>
-                  <p className="text-sm">{slideItem.description}</p>
+                  <p className="text-sm line-clamp-3 min-h-10">{slideItem.description}</p>
                   <Separator className="w-[90%] mx-auto bg-primary" />
                   <p className="text-[#4EFC9A] text-sm font-medium">{t('planFeatures')}</p>
                   <ul className="list-image-[url('/home/right-check.webp')] list-inside text-xs sm:text-base space-y-2 flex flex-col gap-4">
@@ -181,8 +181,9 @@ export default function Plans({ plans }: HeroProps) {
                       </li>
                     ))}
                   </ul>
-
-                  <AddToCartButtons plan={slideItem} />
+                  <div className="mt-auto w-fit mx-auto">
+                    <AddToCartButtons plan={slideItem} />
+                  </div>
                 </CarouselItem>
               )
             })}

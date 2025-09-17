@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { Plan } from '@/payload-types'
+import { getMyFatoorahKey } from '@/actions/get-myfatorah-key'
 
 export async function POST(req: Request) {
   try {
@@ -34,13 +35,13 @@ export async function POST(req: Request) {
     }
 
     const cartData = await cartRes.json()
+
     if (!cartData.docs?.length) {
       return NextResponse.json({ error: 'Empty cart' }, { status: 404 })
     }
 
     const cart = cartData.docs[0]
 
-    // 3. Calculate total + build items array for the order
     let total = 0
     const items = cart.items.map((item: any) => {
       const plan = item.plan as Plan
@@ -78,23 +79,42 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
     }
 
+    const payload = paymentMethodId
+      ? {
+          InvoiceValue: total,
+          CustomerName: user?.user?.email || 'Guest',
+          PaymentMethodId: paymentMethodId, // required for ExecutePayment
+          CallBackUrl: `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/payment/success`,
+          ErrorUrl: `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/payment/failed`,
+          Language: 'en',
+          DisplayCurrencyIso: 'SAR',
+        }
+      : {
+          InvoiceValue: total,
+          CustomerName: user?.user?.email || 'Guest',
+          CallBackUrl: `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/payment/success`,
+          ErrorUrl: `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/payment/failed`,
+          Language: 'en',
+          DisplayCurrencyIso: 'SAR',
+          NotificationOption: 'LNK',
+        }
+
+    const myfatorahKey = await getMyFatoorahKey()
+
     // 5. Call MyFatoorah to create payment link
-    const res = await fetch(`${process.env.MYFATOORAH_BASE_URL}/v2/ExecutePayment`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.MYFATOORAH_API_KEY}`,
-        'Content-Type': 'application/json',
+    const res = await fetch(
+      paymentMethodId
+        ? `${process.env.MYFATOORAH_BASE_URL}/v2/ExecutePayment`
+        : `${process.env.MYFATOORAH_BASE_URL}/v2/SendPayment`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${myfatorahKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify({
-        InvoiceValue: total,
-        CustomerName: user.user.email || 'Guest',
-        PaymentMethodId: paymentMethodId, // single number
-        CallBackUrl: `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/payment/success`,
-        ErrorUrl: `${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/payment/failed`,
-        Language: 'en',
-        DisplayCurrencyIso: 'SAR',
-      }),
-    })
+    )
 
     const data = await res.json()
 

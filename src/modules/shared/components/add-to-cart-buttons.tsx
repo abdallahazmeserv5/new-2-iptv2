@@ -39,7 +39,7 @@ export default function AddToCartButtons({ plan }: { plan: Plan }) {
       // ✅ Refetch cart so UI updates
       queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
-      toast.success('Added to cart!', {
+      toast.success(t('cartUpdatedSuccessfully'), {
         duration: 3000,
       })
       return true

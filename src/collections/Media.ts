@@ -3,6 +3,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: { en: 'Media', ar: 'وسائط' },
+    plural: { en: 'Media', ar: 'الوسائط' },
+  },
   access: {
     create: isAdmin,
     read: () => true,
@@ -15,6 +19,7 @@ export const Media: CollectionConfig = {
       type: 'text',
       required: true,
       localized: true,
+      label: { en: 'Alt Text', ar: 'نص بديل' },
     },
   ],
   upload: true,

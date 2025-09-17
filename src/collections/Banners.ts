@@ -4,6 +4,10 @@ import { isAdmin } from '@/modules/payload/utils'
 
 export const Banners: CollectionConfig = {
   slug: 'banners',
+  labels: {
+    singular: { en: 'Banner', ar: 'إعلان' },
+    plural: { en: 'Banners', ar: 'الإعلانات' },
+  },
   access: {
     create: isAdmin,
     read: () => true, // normal users can see banners

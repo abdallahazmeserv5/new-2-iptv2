@@ -47,7 +47,7 @@ export default function CartDetails({ user }: CartDetailsProps) {
       )}
       {user?.id ? (
         <div className="flex gap-5 flex-col ">
-          <PaymentMethods setSelected={setSelected} selected={selected} />
+          {/* <PaymentMethods setSelected={setSelected} selected={selected} /> */}
           <CheckoutButton selected={selected} />
         </div>
       ) : (

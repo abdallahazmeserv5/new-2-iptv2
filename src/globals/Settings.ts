@@ -12,6 +12,10 @@ export const Settings: GlobalConfig = {
       type: 'upload',
       relationTo: 'media',
       required: true,
+      label: {
+        en: 'Logo',
+        ar: 'الشعار',
+      },
     },
     // social media
     {
@@ -82,23 +86,6 @@ export const Settings: GlobalConfig = {
         description: {
           en: 'Enter WhatsApp number with country code (e.g., +966501234567)',
           ar: 'أدخل رقم الواتساب مع رمز الدولة (مثال: +966501234567)',
-        },
-      },
-    },
-
-    // MyFatoorah configuration
-    {
-      name: 'myfatoorahApiKey',
-      type: 'text',
-      defaultValue: '',
-      label: {
-        en: 'MyFatoorah API Key',
-        ar: 'مفتاح API الخاص بـ MyFatoorah',
-      },
-      admin: {
-        description: {
-          en: 'Enter your MyFatoorah API key for payment processing',
-          ar: 'أدخل مفتاح API الخاص بـ MyFatoorah لمعالجة المدفوعات',
         },
       },
     },

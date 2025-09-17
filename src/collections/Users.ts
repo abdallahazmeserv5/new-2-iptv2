@@ -1,3 +1,4 @@
+import { isAdmin } from '@/modules/payload/utils'
 import { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
@@ -8,6 +9,10 @@ export const Users: CollectionConfig = {
       secure: true,
     },
   },
+  labels: {
+    singular: { en: 'User', ar: 'مستخدم' },
+    plural: { en: 'Users', ar: 'المستخدمون' },
+  },
   admin: {
     useAsTitle: 'email',
   },
@@ -15,7 +20,7 @@ export const Users: CollectionConfig = {
     create: () => true,
     read: () => true,
     update: ({ req }) => !!req.user,
-    delete: () => false,
+    delete: isAdmin,
     admin: ({ req }) => {
       const user = req.user
       return user?.role === 'admin'
@@ -24,17 +29,18 @@ export const Users: CollectionConfig = {
   fields: [
     {
       name: 'phone',
-      label: 'Phone Number',
+      label: { en: 'Phone Number', ar: 'رقم الهاتف' },
       type: 'text',
       required: true,
+      unique: true,
     },
     {
       name: 'role',
-      label: 'Role',
+      label: { en: 'Role', ar: 'الدور' },
       type: 'select',
       options: [
-        { label: 'Admin', value: 'admin' },
-        { label: 'User', value: 'user' },
+        { label: { en: 'Admin', ar: 'مشرف' }, value: 'admin' },
+        { label: { en: 'User', ar: 'مستخدم' }, value: 'user' },
       ],
       defaultValue: 'user',
       required: true,

@@ -30,12 +30,9 @@ export default function SignupForm({ isCart }: { isCart?: boolean }) {
   const [submitting, setSubmitting] = React.useState(false)
 
   const formSchema = z.object({
-    email: z.string().email(t('enterEmail') || 'Please enter a valid email'),
-    phone: z.string().min(1, t('enterPhone') || 'Please enter your phone number'),
-    password: z
-      .string()
-      .min(6, t('passwordInvalid') || 'Password must be at least 6 characters')
-      .max(100, t('passwordInvalid') || 'Password is too long'),
+    email: z.string().email(t('enterEmail')),
+    phone: z.string().min(1, t('enterPhone')),
+    password: z.string().min(6, t('passwordInvalid')).max(100, t('passwordInvalid')),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,10 +45,11 @@ export default function SignupForm({ isCart }: { isCart?: boolean }) {
     mutationFn: (values: z.infer<typeof formSchema>) =>
       baseFetch({ url: '/api/users', method: 'POST', body: values }),
     onSuccess: async (data, values) => {
-      toast.success(t('signupSuccess'))
-
+      if (!data) {
+        return
+      }
       try {
-        await sendMessage({
+        sendMessage({
           number: values.phone,
           message: t('welcomeAtTornado', { email: values.email, password: values.password }),
         })

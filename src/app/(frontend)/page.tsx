@@ -1,4 +1,5 @@
 import { configuredPayload } from '@/actions'
+import { getMyFatoorahKey } from '@/actions/get-myfatorah-key'
 import Banners from '@/modules/home/components/banners'
 import Faq from '@/modules/home/components/faq-section'
 import Features from '@/modules/home/components/features'
@@ -34,6 +35,8 @@ export default async function HomePage() {
       collection: 'features',
     }),
   ])
+
+  const x = await getMyFatoorahKey()
   return (
     <main className="flex flex-col gap-10 lg:gap-16 ">
       <Hero heroSection={heroSection} />

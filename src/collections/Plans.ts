@@ -155,6 +155,7 @@ export const Plans: CollectionConfig = {
       name: 'duration',
       type: 'number',
       required: true,
+      label: { en: 'Duration (months)', ar: 'المدة (بالأشهر)' },
     },
   ],
 }

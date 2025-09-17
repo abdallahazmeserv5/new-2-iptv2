@@ -60,7 +60,6 @@ export default function Hero({ heroSection }: HeroProps) {
         <CarouselContent className="w-full h-[calc(100vh-90px)]  ">
           {slideItems?.map((slideItem, index) => {
             const mainImg = slideItem.mainImage as Media
-            const secondaryImg = slideItem.secondaryImage as Media
             const [first, rest] = slideItem.title?.split(' ', 2) || []
             return (
               <CarouselItem key={index} className=" w-full h-full ">

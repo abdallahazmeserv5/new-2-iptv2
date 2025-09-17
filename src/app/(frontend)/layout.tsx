@@ -6,11 +6,9 @@ import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
-import { cookies } from 'next/headers'
 import React from 'react'
 import Providers from './providers'
 import './styles.css'
-import { baseFetch } from '@/actions/fetch'
 
 export const metadata = {
   description: 'Best site to watch the latest movies.',
@@ -22,21 +20,9 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
 
   const lang = await getLocale()
   const payload = await configuredPayload()
-  const cookieStore = await cookies()
-
-  // Turn them into a header
-  const headers = new Headers()
-  cookieStore.getAll().forEach((c) => {
-    headers.append('cookie', `${c.name}=${c.value}`)
-  })
 
   const queryClient = new QueryClient()
-  const [user, pages, settings] = await Promise.all([
-    queryClient.fetchQuery({
-      queryKey: ['/me'],
-      queryFn: async () => await payload.auth({ headers }),
-      staleTime: Infinity,
-    }),
+  const [pages, settings] = await Promise.all([
     queryClient.fetchQuery({
       queryKey: ['/pages', lang],
       queryFn: async () =>
@@ -57,23 +43,6 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     }),
   ])
 
-  // const response = await baseFetch({
-  //   externalApi: true,
-  //   method: 'POST',
-  //   headers: {
-  //     Accept: 'application/json',
-  //     Authorization: 'Bearer ' + process.env.MYFATOORAH_API_KEY,
-  //     'Content-Type': 'application/json',
-  //   },
-  //   url: process.env.MYFATOORAH_BASE_URL + '/v2/InitiatePayment',
-  //   body: {
-  //     InvoiceAmount: 100,
-  //     CurrencyIso: 'KWD',
-  //   },
-  // })
-
-  // console.log({ response })
-
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (
     <html lang={lang} dir={dir} className="scroll-smooth">
@@ -81,7 +50,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
         <NextIntlClientProvider>
           <HydrationBoundary state={dehydrate(queryClient)}>
             <body className="min-h-screen flex flex-col">
-              <Navbar settings={settings} user={user} pages={pages} />
+              <Navbar settings={settings} pages={pages} />
               <main className="flex-1"> {children}</main>
               <Footer settings={settings} pages={pages} />
               <Toaster richColors closeButton />

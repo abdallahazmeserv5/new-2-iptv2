@@ -7,11 +7,10 @@ import { PaginatedDocs } from 'payload'
 
 interface Props {
   settings: Setting
-  user: any
   pages: PaginatedDocs<Page>
 }
 
-export default function Navbar({ settings, user, pages }: Props) {
+export default function Navbar({ settings, pages }: Props) {
   return (
     <div className="bg-background py-5">
       <header className="container mx-auto px-4 flex items-center justify-between">
@@ -22,7 +21,7 @@ export default function Navbar({ settings, user, pages }: Props) {
         </div>
         <ActionButtons />
         {/* mobile screen */}
-        <MobileMenu user={user} />
+        <MobileMenu />
       </header>
     </div>
   )

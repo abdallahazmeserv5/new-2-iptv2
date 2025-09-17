@@ -17,14 +17,18 @@ export default function CheckoutButton({ selected }: { selected: number | null }
         body: { paymentMethodId },
       }),
     onSuccess: (data) => {
+      if (data?.IsSuccess && data?.Data?.InvoiceURL) {
+        return (window.location.href = data.Data.InvoiceURL)
+      }
+
       if (data?.IsSuccess && data?.Data?.PaymentURL) {
-        window.location.href = data.Data.PaymentURL
+        return (window.location.href = data.Data.PaymentURL)
       } else {
-        toast('faildToCreateOrder')
+        toast.error(t('faildToCreateOrder'))
       }
     },
-    onError: () => {
-      toast('faildToCreateOrder')
+    onError: (error) => {
+      toast.error(t('faildToCreateOrder'))
     },
   })
 

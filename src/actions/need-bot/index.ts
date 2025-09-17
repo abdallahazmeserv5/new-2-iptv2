@@ -4,7 +4,7 @@ import { baseFetch } from '../fetch'
 export async function sendMessage({
   number,
   message,
-  retries = 5,
+  retries = 3,
 }: {
   number: string
   message: string

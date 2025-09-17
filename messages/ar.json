@@ -76,7 +76,7 @@
   "yourCart": "سلتك",
   "createingAccount": "جاري إنشاء الحساب",
   "phone": "رقم الهاتف",
-  "welcomeAtTornado": "مرحبًا بك في Tornado IPTV، بريدك الإلكتروني: {email} وكلمة المرور الخاصة بك: {password}",
+  "welcomeAtTornado": " اهلا وسهلا بك في Tornado 4kTV، بريدك الإلكتروني: {email} وكلمة المرور الخاصة بك: {password}",
   "leaveReview": "إضافة تعليق",
   "name": "الاسم",
   "country": "البلد",
@@ -92,6 +92,16 @@
   "alreadyHaveAccount": "لديك حساب بالفعل",
   "log": "سجل الدخول",
   "loginSucess": "تسجيل الدخول بنجاح",
+  "loginFaild": "حدث خطا في تسجيل الدخول",
   "savedOnCart": "تم الحفظ في السلة",
-  "addToCartGuestMode": "تم الإضافة في السلة (وضع الزائر)"
+  "addToCartGuestMode": "تم الإضافة في السلة (وضع الزائر)",
+  "avilableChannels": "القنوات المتاحة",
+  "enterPhone": "ادخل رقم الهاتف",
+  "signIn": "تسجيل الدخول",
+  "creatingAccount": "جاري إنشاء حساب",
+  "signingIn": "تسجيل الدخول...",
+  "itemRemoved": "تم حذف العنصر من السلة",
+  "cartUpdatedSuccessfully": "تم تحديث السلة بنجاح",
+  "designedBy": "تم التصميم والبرمجة بواسطة Serv5. جميع الحقوق محفوظة.",
+  "madeWithLove": "صنع بكل الحب بواسطة Serv5"
 }

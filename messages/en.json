@@ -92,5 +92,14 @@
   "log": "Log in",
   "loginSucess": "Login successful!",
   "savedOnCart": "Saved on cart",
-  "addToCartGuestMode": "Added to cart (guest mode)"
+  "addToCartGuestMode": "Added to cart (guest mode)",
+  "avilableChannels": "Avilable Channels",
+  "enterPhone": "Enter phone number",
+  "signIn": "Sign In",
+  "creatingAccount": "Creating account",
+  "signingIn": "Signing In...",
+  "itemRemoved": "Item deleted successfully",
+  "cartUpdatedSuccessfully": "Cart updated successfully",
+  "designedBy": "Designed and Programmed by Serv5. All rights reserved.",
+  "madeWithLove": "Made with love by serv5."
 }

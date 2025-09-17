@@ -10,12 +10,11 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel'
 import ImageFallBack from '@/modules/shared/components/image-fall-back'
-import { HeroSlide, Media, Package } from '@/payload-types'
+import SectionHeader from '@/modules/shared/components/section-header'
+import { Media, Package } from '@/payload-types'
 import { useLocale, useTranslations } from 'next-intl'
 import { PaginatedDocs } from 'payload'
 import { useEffect, useState } from 'react'
-import SectionHeader from '@/modules/shared/components/section-header'
-import Link from 'next/link'
 
 interface HeroProps {
   packages: PaginatedDocs<Package>
@@ -46,7 +45,7 @@ export default function Packages({ packages }: HeroProps) {
 
   return (
     <section className="container mx-auto px-4  hidden md:block">
-      <SectionHeader sectionHeader={t('avilablePackages')} />
+      <SectionHeader sectionHeader={t('avilableChannels')} />
 
       <Carousel
         plugins={[

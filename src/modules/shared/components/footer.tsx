@@ -44,7 +44,7 @@ export default async function Footer({ settings, pages }: Props) {
     <footer className="bg-black mb-16 lg:mb-0 mt-10">
       <div className=" container mx-auto px-4 pt-10">
         {/* first part */}
-        <div className="container mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-4 my-5">
+        <div className="container mx-auto px-4 grid grid-cols-2 lg:grid-cols-3 gap-4 my-5">
           {/* first col */}
           <div className="">
             <h3 className="text-primary font-semibold text-lg">{t('homePage')}</h3>
@@ -56,31 +56,24 @@ export default async function Footer({ settings, pages }: Props) {
               ))}
             </ul>
           </div>
+
+          {/* second col */}
           <div className="">
             <h3 className="text-primary font-semibold text-lg">{t('addetionalPages')}</h3>
             <ul className="flex flex-col gap-[14px] mt-8">
               {pagesFooter.map((item) => (
-                <li className="text-[#999999] hover:text-white ">
+                <li className="text-[#999999] hover:text-white " key={item.label}>
                   <Link href={item.link}>{item.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="">
-            <h3 className="text-primary font-semibold text-lg">{t('homePage')}</h3>
-            <ul className="flex flex-col gap-[14px] mt-8">
-              {mainNav.map((item) => (
-                <li className="text-[#999999] hover:text-white ">
-                  <Link href={item.link}>{item.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          {/* fourth col */}
-          <div className="">
+
+          {/* third col */}
+          <div className="col-span-2 lg:col-span-1 text-center">
             <h3 className="text-primary font-semibold text-lg">{t('socialMedia')}</h3>
-            <ul className="flex gap-[14px] mt-8 ">
-              {socialMedia.map((item, index) => {
+            <ul className="flex justify-center gap-[14px] mt-8">
+              {socialMedia.map((item) => {
                 const image = item.socialMediaImage as Media
                 return (
                   <li key={item.id} className="text-[#999999] hover:text-white">
@@ -105,7 +98,7 @@ export default async function Footer({ settings, pages }: Props) {
         </div>
         <Separator className="bg-[#262626] w-full" />
         {/* last part */}
-        <div className="py-10 flex items-center">
+        <div className="py-10  flex flex-col lg:flex-row items-center justify-between gap-4">
           <div className="flex gap-5">
             <Link
               href={'/terms-condtions'}
@@ -121,10 +114,11 @@ export default async function Footer({ settings, pages }: Props) {
             </Link>
           </div>
           <Link
-            href={'#'}
-            className="text-[#999999] hover:text-white transition-all transform duration-300 inline-block ms-auto "
+            href={'https://serv5.com/'}
+            target="_blank"
+            className="text-[#999999] hover:text-white transition-all transform duration-300 inline-block"
           >
-            @2025 name, All Rights Reserved
+            {t('madeWithLove')}
           </Link>
         </div>
       </div>

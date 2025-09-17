@@ -42,7 +42,7 @@ export function CartIcon() {
   //         try {
   //           const res1 = await sendMessage({
   //             number: phone,
-  //             message: 'complete buying',
+  //             message: 'عميلنا العزيز لاحظنا أن سلتك مهجورة تواصل معنا واحصل علي كود خصم مميز لتكملة طلبك',
   //           })
   //         } catch (err) {
   //           console.error(`Failed to send message to ${phone}`, err)

@@ -60,7 +60,7 @@ export default function CartItems({ cartItems, user }: Props) {
     },
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ['/cart', lang] })
-      toast.success('Cart updated successfully')
+      toast.success(t('cartUpdatedSuccessfully'))
     },
     onError: (error) => {
       console.error('Cart update error:', error)
@@ -77,13 +77,12 @@ export default function CartItems({ cartItems, user }: Props) {
       planId: string
       currentQuantity: number
     }) => {
-      // Send negative quantity to remove all of this item
       const res = await fetch('/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          items: [{ planId, quantity: -currentQuantity }], // Negative quantity to remove all
+          items: [{ planId, quantity: -currentQuantity }],
         }),
       })
 
@@ -96,7 +95,7 @@ export default function CartItems({ cartItems, user }: Props) {
     },
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ['/cart', lang] })
-      toast.success('Item removed from cart')
+      toast.success(t('itemRemoved'))
     },
     onError: (error) => {
       console.error('Remove item error:', error)
@@ -124,7 +123,7 @@ export default function CartItems({ cartItems, user }: Props) {
   const handleGuestUpdate = (planId: string, newQuantity: number) => {
     if (newQuantity < 1) {
       removeFromCart(planId)
-      toast.success('Item removed from cart')
+      toast.success(t('itemRemoved'))
     } else {
       updateItemQuantity(planId, newQuantity)
       toast.success('Cart updated')
@@ -133,7 +132,7 @@ export default function CartItems({ cartItems, user }: Props) {
 
   const handleGuestRemove = (planId: string) => {
     removeFromCart(planId)
-    toast.success('Item removed from cart')
+    toast.success(t('itemRemoved'))
   }
 
   // Use guest cart items from the hook instead of local state

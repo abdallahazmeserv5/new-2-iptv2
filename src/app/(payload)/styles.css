@@ -1,0 +1,13 @@
+/* src/css/payload.css */
+
+/* prevent Tailwind preflight from overriding Payload base styles */
+@layer theme, base, components, utilities;
+
+/* import Tailwind layers individually */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/base.css" layer(base);
+@import "tailwindcss/components.css" layer(components);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* let Tailwind understand Payload's dark mode */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));

@@ -10,6 +10,7 @@ export const useUser = () => {
       return res?.user ?? null
     },
   })
-  const user = data?.user
+  const user = data
+
   return { isLoading, user }
 }

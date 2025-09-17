@@ -17,17 +17,17 @@ export const Testimonial: CollectionConfig = {
     useAsTitle: 'reviewer', // show reviewer name in dashboard
   },
   fields: [
-    {
-      name: 'image',
-      type: 'upload',
-      relationTo: 'media',
-      required: true,
-      localized: true,
-      label: {
-        en: 'User Image',
-        ar: 'صورة المستخدم',
-      },
-    },
+    // {
+    //   name: 'image',
+    //   type: 'upload',
+    //   relationTo: 'media',
+    //   required: true,
+    //   localized: true,
+    //   label: {
+    //     en: 'User Image',
+    //     ar: 'صورة المستخدم',
+    //   },
+    // },
     {
       name: 'reviewer',
       type: 'text',

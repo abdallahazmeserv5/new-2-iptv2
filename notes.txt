@@ -1,0 +1,16 @@
+  // const response = await baseFetch({
+  //   externalApi: true,
+  //   method: 'POST',
+  //   headers: {
+  //     Accept: 'application/json',
+  //     Authorization: 'Bearer ' + process.env.MYFATOORAH_API_KEY,
+  //     'Content-Type': 'application/json',
+  //   },
+  //   url: process.env.MYFATOORAH_BASE_URL + '/v2/InitiatePayment',
+  //   body: {
+  //     InvoiceAmount: 100,
+  //     CurrencyIso: 'KWD',
+  //   },
+  // })
+
+  // console.log({ response })

@@ -1,7 +1,6 @@
 'use client'
 
-import { useLocale, useTranslations } from 'next-intl'
-import { z } from 'zod'
+import { baseFetch } from '@/actions/fetch'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -11,20 +10,19 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
+import { useCart } from '@/modules/cart/hooks/use-cart'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
+import { useLocale, useTranslations } from 'next-intl'
+import Link from 'next/link'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { Input } from '@/components/ui/input'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
-import { useQueryClient } from '@tanstack/react-query'
-import { useCart } from '@/modules/cart/hooks/use-cart'
-import { baseFetch } from '@/actions/fetch'
+import { z } from 'zod'
 
 export default function SigninForm({ isCart }: { isCart?: boolean }) {
-  const router = useRouter()
   const lang = useLocale()
   const queryClient = useQueryClient()
   const t = useTranslations()
@@ -32,10 +30,7 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
 
   const formSchema = z.object({
     email: z.string().email(t('enterValidEmail') || 'Please enter a valid email'),
-    password: z
-      .string()
-      .min(1, 'Password is required')
-      .max(100, t('passwordInvalid') || 'Password is too long'),
+    password: z.string().min(1, 'Password is required').max(100, t('passwordInvalid')),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,13 +83,11 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
       })
 
       if (!data) {
-        toast.error('Login failed')
         return
       }
 
-      toast.success('Login successful!')
+      toast.success(t('loginSucess'))
 
-      // Transfer guest cart items to backend
       await transferGuestCartToBackend()
       await queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
@@ -171,7 +164,7 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
               disabled={submitting || !form.formState.isValid}
               className="w-full sm:w-auto"
             >
-              {submitting ? 'Signing In...' : t('signin') || 'Sign In'}
+              {submitting ? t('signingIn') : t('signin')}
             </Button>
           </form>
         </Form>
