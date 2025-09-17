@@ -76,7 +76,7 @@ export default function Features({ features }: FeaturesProps) {
                   className="object-contain transform transition-transform duration-300 group-hover:scale-110 w-[150px] h-[150px]"
                   src={img.url || ''}
                 />
-                <p className="text-white font-semibold text-lg group-hover:text-primary">
+                <p className="text-white font-semibold text-lg group-hover:text-primary line-clamp-1">
                   {slideItem.title}
                 </p>
               </CarouselItem>

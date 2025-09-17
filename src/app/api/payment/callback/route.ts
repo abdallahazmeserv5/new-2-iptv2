@@ -85,7 +85,7 @@ export async function POST(req: Request) {
       .map((it: any) => `${it.plan?.title ?? it.plan} x${it.quantity}`)
       .join(', ')
 
-    const message = `شكرًا لك تم الشراء بنجاح رقم الطلب الخاص بك${order.id} %0A يمكنك الدخول علي الموقع وتقييم الخدمة`
+    const message = `شكرًا لك تم الشراء بنجاح رقم الطلب الخاص بك${order.id} يمكنك الدخول علي الموقع وتقييم الخدمة`
 
     await sendMessage({ number: phone, message })
     sendMessage({ number: phone, message })
