@@ -41,9 +41,9 @@ export default async function HomePage() {
     <main className="flex flex-col gap-10 lg:gap-16 ">
       <Hero heroSection={heroSection} />
       <SubscriptionSteps />
-      <Features features={features} />
-      <Packages packages={packages} />
       <Plans plans={plans} />
+      <Packages packages={packages} />
+      <Features features={features} />
       <TestimonialSection testimonial={testimonial} />
       <Banners banners={banners} />
       <Faq faqs={faqs} />
