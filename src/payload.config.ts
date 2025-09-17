@@ -47,6 +47,7 @@ export default buildConfig({
     'http://localhost:3000',
     'https://new-2-iptv2.vercel.app',
     'https://tornado-tv4k.com',
+    'https://www.tornado-tv4k.com',
     process.env.VERCEL_URL,
   ],
   csrf: [
@@ -54,6 +55,7 @@ export default buildConfig({
     'http://localhost:3000',
     'https://new-2-iptv2.vercel.app',
     'https://tornado-tv4k.com',
+    'https://www.tornado-tv4k.com',
     process.env.VERCEL_URL,
   ],
   globals: [Settings],
