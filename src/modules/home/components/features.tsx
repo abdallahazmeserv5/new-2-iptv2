@@ -23,6 +23,7 @@ interface FeaturesProps {
 export default function Features({ features }: FeaturesProps) {
   const t = useTranslations('')
   const [api, setApi] = useState<CarouselApi>()
+
   const lang = useLocale()
   const [current, setCurrent] = useState(0)
 
@@ -76,6 +77,7 @@ export default function Features({ features }: FeaturesProps) {
                   className="object-contain transform transition-transform duration-300 group-hover:scale-110 w-[150px] h-[150px]"
                   src={img.url || ''}
                 />
+
                 <p className="text-white font-semibold text-lg group-hover:text-primary line-clamp-1">
                   {slideItem.title}
                 </p>
