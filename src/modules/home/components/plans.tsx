@@ -216,34 +216,40 @@ export default function Plans({ plans }: HeroProps) {
         {slideItems?.map((slideItem, index) => {
           const img = slideItem.image as Media
           return (
-            <>
-              <Link
-                href={`/plans/${slideItem.id}`}
-                key={index}
-                className="basis-[270px] shrink-0 h-full bg-[#262626] p-2 sm:p-8 items-center rounded-2xl me-5 group cursor-pointer flex flex-col gap-2 "
+            <Link
+              href={`/plans/${slideItem.id}`}
+              key={index}
+              className="basis-[270px] shrink-0 h-full bg-[#262626] p-2 sm:p-8 items-center rounded-2xl me-5 group cursor-pointer flex flex-col gap-2"
+            >
+              <ImageFallBack
+                alt={img?.alt}
+                width={180}
+                height={185}
+                className="object-contain transform transition-transform duration-300 group-hover:scale-110 w-[150px] h-[150px]"
+                src={img?.url || ''}
+              />
+
+              <p className="text-white font-semibold text-lg group-hover:text-primary">
+                {slideItem.title}
+              </p>
+
+              <p className="font-bold text-primary">
+                {slideItem.price} {t('sar')}
+              </p>
+
+              <p className="text-muted">
+                {slideItem.duration} {t('monthes')}
+              </p>
+
+              <div
+                onClick={(e) => {
+                  e.stopPropagation() // stop bubbling to Link
+                  e.preventDefault() // prevent navigation
+                }}
               >
-                <ImageFallBack
-                  alt={img?.alt}
-                  width={180}
-                  height={185}
-                  className="object-contain transform transition-transform duration-300 group-hover:scale-110 w-[150px] h-[150px]"
-                  src={img?.url || ''}
-                />
-                <p className="text-white font-semibold text-lg group-hover:text-primary">
-                  {slideItem.title}
-                </p>
-
-                <p className="font-bold text-primary">
-                  {slideItem.price} {t('sar')}
-                </p>
-
-                <p className="text-muted">
-                  {slideItem.duration} {t('monthes')}
-                </p>
-
                 <AddToCartButtons plan={slideItem} />
-              </Link>
-            </>
+              </div>
+            </Link>
           )
         })}
       </section>
