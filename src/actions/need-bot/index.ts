@@ -38,7 +38,6 @@ export async function sendMessage({
 
     return null
   } catch (error) {
-    console.error('sendMessage error:', error)
     return null
   }
 }

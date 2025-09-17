@@ -114,7 +114,7 @@ export default async function Footer({ settings, pages }: Props) {
             </Link>
           </div>
           <Link
-            href={'https://serv5.com/'}
+            href={'https://tornado-tv4k.com/'}
             target="_blank"
             className="text-[#999999] hover:text-white transition-all transform duration-300 inline-block"
           >

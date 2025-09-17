@@ -67,7 +67,7 @@ export default function Packages({ packages }: HeroProps) {
             return (
               <CarouselItem
                 key={index}
-                className="basis-[270px] shrink-0 h-full bg-[#262626] p-8 flex flex-col items-center rounded-2xl me-5 group cursor-pointer"
+                className="basis-[270px] shrink-0 h-full bg-[#262626] p-2 flex flex-col items-center rounded-2xl me-5 group cursor-pointer"
               >
                 <ImageFallBack
                   alt={img?.alt}
@@ -76,7 +76,7 @@ export default function Packages({ packages }: HeroProps) {
                   className="object-contain transform transition-transform duration-300 group-hover:scale-110 w-[150px] h-[150px]"
                   src={img.url || ''}
                 />
-                <p className="text-white font-semibold text-lg group-hover:text-primary">
+                <p className="text-white font-semibold text-lg group-hover:text-primary hidden">
                   {slideItem.title}
                 </p>
               </CarouselItem>

@@ -45,7 +45,7 @@ export default function Features({ features }: FeaturesProps) {
   }, [api])
 
   return (
-    <section className="container mx-auto px-4 " id="features">
+    <section className="container mx-auto px-4 mt-5" id="features">
       <SectionHeader sectionHeader={t('features')} />
 
       <Carousel

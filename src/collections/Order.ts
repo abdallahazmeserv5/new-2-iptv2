@@ -143,7 +143,6 @@ export const Orders: CollectionConfig = {
           const phoneRaw: string | undefined = user?.phone
 
           if (!phoneRaw) {
-            console.warn(`User ${userId} has no phone for order ${doc.id}`)
             return
           }
 
@@ -163,9 +162,7 @@ export const Orders: CollectionConfig = {
               req,
             })
           }
-        } catch (err) {
-          console.error('Error in Orders.afterChange hook:', err)
-        }
+        } catch (err) {}
       },
     ],
     beforeChange: [

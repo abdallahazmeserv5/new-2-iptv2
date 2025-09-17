@@ -33,7 +33,7 @@ export default function CartDetails({ user }: CartDetailsProps) {
   })
 
   // Normalize cartData: always use the first cart from docs if present
-  const cartData = rawCartData?.docs?.[0] || rawCartData || { items: [] }
+  const cartData = rawCartData?.docs?.at(-1) || rawCartData || { items: [] }
 
   const cartItems = cartData?.items || []
   const cartId = cartData?.id || null

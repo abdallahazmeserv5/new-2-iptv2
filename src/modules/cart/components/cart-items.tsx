@@ -63,7 +63,6 @@ export default function CartItems({ cartItems, user }: Props) {
       toast.success(t('cartUpdatedSuccessfully'))
     },
     onError: (error) => {
-      console.error('Cart update error:', error)
       toast.error('Failed to update cart')
     },
   })
@@ -98,7 +97,6 @@ export default function CartItems({ cartItems, user }: Props) {
       toast.success(t('itemRemoved'))
     },
     onError: (error) => {
-      console.error('Remove item error:', error)
       toast.error('Failed to remove item')
     },
   })

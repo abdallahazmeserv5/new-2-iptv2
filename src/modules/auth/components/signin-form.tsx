@@ -62,10 +62,9 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
       window.dispatchEvent(new CustomEvent('guestCartUpdated'))
       await queryClient.refetchQueries({ queryKey: ['/cart', lang] })
 
-      toast.success(`Transferred ${guestCartItems.length} item(s) to your account!`)
+      toast.success(t('itemAddedToCart'))
       return true
     } catch (error) {
-      console.error('Error transferring guest cart:', error)
       toast.error('Failed to transfer some cart items. Please add them manually.')
       return false
     }
@@ -93,7 +92,6 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
 
       window.location.href = '/cart'
     } catch (err) {
-      console.error('Login error:', err)
       toast.error('Something went wrong')
     } finally {
       setSubmitting(false)

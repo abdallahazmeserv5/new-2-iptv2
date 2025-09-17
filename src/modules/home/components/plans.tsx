@@ -53,7 +53,6 @@ export default function Plans({ plans }: HeroProps) {
       }
       return false
     } catch (error) {
-      console.error('Auth check failed:', error)
       return false
     }
   }
@@ -81,7 +80,6 @@ export default function Plans({ plans }: HeroProps) {
         duration: 3000,
       })
     } catch (err) {
-      console.error(err)
       toast.error(t('somethingWentWrong'))
     }
   }
@@ -163,7 +161,7 @@ export default function Plans({ plans }: HeroProps) {
                   className="basis-[330px] sm:basis-[410px] shrink-0   bg-[#050505] p-4  rounded-2xl me-5 group  border-2 border-primary text-white flex flex-col gap-4 items-stretch  "
                 >
                   <Link
-                    className="text-white font-medium text-2xl hover:text-primary text-center"
+                    className="text-white font-medium text-sm hover:text-primary text-center"
                     href={`/plans/${slideItem.id}`}
                   >
                     {slideItem.title}
@@ -229,7 +227,7 @@ export default function Plans({ plans }: HeroProps) {
                 src={img?.url || ''}
               />
 
-              <p className="text-white font-semibold text-lg group-hover:text-primary">
+              <p className="text-white font-semibold text-sm group-hover:text-primary">
                 {slideItem.title}
               </p>
 
@@ -237,7 +235,7 @@ export default function Plans({ plans }: HeroProps) {
                 {slideItem.price} {t('sar')}
               </p>
 
-              <p className="text-muted">
+              <p className="text-muted hidden">
                 {slideItem.duration} {t('monthes')}
               </p>
 

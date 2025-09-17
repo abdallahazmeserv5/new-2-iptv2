@@ -44,7 +44,6 @@ export default function AddToCartButtons({ plan }: { plan: Plan }) {
       })
       return true
     } catch (err) {
-      console.error(err)
       toast.error('Something went wrong')
       return false
     }
@@ -78,7 +77,7 @@ export default function AddToCartButtons({ plan }: { plan: Plan }) {
 
   return (
     <PrimaryButton
-      className="flex gap-2 items-center justify-center"
+      className="flex gap-2 items-center justify-center !py-2"
       onClick={() => addToCart(plan.id)}
     >
       <ArrowUpRight className="text-[#9EFF3E] " />

@@ -65,7 +65,7 @@ export async function POST(req: Request) {
 
     const cartsData = await cartsRes.json()
 
-    const cart = cartsData?.docs?.[0]
+    const cart = cartsData?.docs?.at(-1)
 
     if (cart) {
       await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/api/carts/${cart.id}`, {
@@ -92,7 +92,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, order })
   } catch (err) {
-    console.error(err)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }

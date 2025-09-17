@@ -16,9 +16,7 @@ export default async function Page() {
   try {
     const { user: authUser } = await payload.auth({ headers })
     user = authUser || null
-  } catch (err) {
-    console.error('Auth check failed:', err)
-  }
+  } catch (err) {}
 
   return (
     <main className="bg-black flex flex-col gap-5 lg:gap-10 pt-5">

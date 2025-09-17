@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Empty cart' }, { status: 404 })
     }
 
-    const cart = cartData.docs[0]
+    const cart = cartData?.docs?.at(-1)
 
     let total = 0
     const items = cart.items.map((item: any) => {
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${myfatorahKey}`,
+          Authorization: `Bearer ${myfatorahKey?.trim()}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
@@ -121,7 +121,6 @@ export async function POST(req: Request) {
     // 6. Return payment link data
     return NextResponse.json(data)
   } catch (err) {
-    console.error('Payment error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }

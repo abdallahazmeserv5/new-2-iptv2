@@ -60,7 +60,7 @@ export default function Cart() {
   if (!isClient) return null // Prevent hydration issues
 
   // Normalize authCart: always use the first cart from docs if present
-  const authCart = rawAuthCart?.docs?.[0] || rawAuthCart || { items: [] }
+  const authCart = rawAuthCart?.docs?.at(-1) || rawAuthCart || { items: [] }
 
   // Decide which cart to display
   const cartItems = user?.id ? authCart?.items || [] : guestCartItems || []
