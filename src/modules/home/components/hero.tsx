@@ -42,7 +42,7 @@ export default function Hero({ heroSection }: HeroProps) {
   }, [api])
 
   return (
-    <section className=" h-[calc(100vh-90px)] bg-[linear-gradient(166.94deg,#0F1014_2.08%,#0A131C_78.41%)]">
+    <section className=" h-[calc(80vh-90px)] bg-[linear-gradient(166.94deg,#0F1014_2.08%,#0A131C_78.41%)]">
       <Carousel
         plugins={[
           Autoplay({
@@ -57,7 +57,7 @@ export default function Hero({ heroSection }: HeroProps) {
           direction: dir,
         }}
       >
-        <CarouselContent className="w-full h-[calc(100vh-90px)]  ">
+        <CarouselContent className="w-full h-[calc(80vh-90px)]  ">
           {slideItems?.map((slideItem, index) => {
             const mainImg = slideItem.mainImage as Media
             const [first, rest] = slideItem.title?.split(' ', 2) || []

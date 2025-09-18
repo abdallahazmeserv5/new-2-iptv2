@@ -43,7 +43,6 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       staleTime: Infinity,
     }),
   ])
-
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (
     <html lang={lang} dir={dir} className="scroll-smooth">

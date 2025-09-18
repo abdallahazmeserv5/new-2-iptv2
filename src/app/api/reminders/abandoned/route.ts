@@ -61,7 +61,7 @@ export async function POST() {
         `عزيزي العميل،\n\n` +
         `لاحظنا أن سلتك مهجورة 🛒\n` +
         `يمكنك تكملة طلبك والتواصل معنا لتحصل على هديتك 🎁\n\n` +
-        `Tornado-TV4k\n` +
+        `Tornado-TV4k\n\n` +
         `https://tornado-tv4k.com/cart`
 
       try {

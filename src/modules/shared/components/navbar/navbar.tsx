@@ -21,7 +21,7 @@ export default function Navbar({ settings, pages }: Props) {
         </div>
         <ActionButtons />
         {/* mobile screen */}
-        <MobileMenu />
+        <MobileMenu settings={settings} />
       </header>
     </div>
   )

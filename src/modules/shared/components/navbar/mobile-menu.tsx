@@ -6,8 +6,9 @@ import { Home, BookOpen, Star, Phone, Newspaper } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslations } from 'next-intl'
 import Cart from './cart'
+import { Setting, SettingsSelect } from '@/payload-types'
 
-export default function MobileMenu() {
+export default function MobileMenu({ settings }: { settings: Setting }) {
   const pathname = usePathname()
   const t = useTranslations()
 
@@ -15,7 +16,7 @@ export default function MobileMenu() {
     { href: '/', label: t('homePage'), icon: Home },
     { href: '/#plans', label: t('subscriptions'), icon: BookOpen },
     {
-      href: `https://wa.me/${process.env.NEXT_PUBLIC_PHONE}`,
+      href: `https://wa.me/${settings.whatsappNumber}`,
       label: t('contact-us'),
       icon: Phone,
       target: true,
