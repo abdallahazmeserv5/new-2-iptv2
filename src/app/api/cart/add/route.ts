@@ -111,7 +111,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, cart: updated }, { status: 200 })
   } catch (err: any) {
-    console.error('Add to cart error:', err)
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
   }
 }

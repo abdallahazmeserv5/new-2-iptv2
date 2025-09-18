@@ -129,7 +129,6 @@ export function ReviewDialog({ planDetails }: Props) {
       setOpen(false)
     },
     onError: (error: Error) => {
-      console.error('Review submit error:', error)
       toast.error(error.message || t('reviewFailed'))
     },
   })

@@ -36,6 +36,10 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
+      graphics: {
+        Logo: 'src/modules/payload/components/logo#Logo',
+        Icon: 'src/modules/payload/components/logo#Logo',
+      },
       beforeDashboard: [
         'src/modules/payload/components/notification-icon#NotificationIcon',
         'src/modules/payload/components/cart-icon#CartIcon',

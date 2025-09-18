@@ -53,13 +53,10 @@ export default function SignupForm({ isCart }: { isCart?: boolean }) {
           number: values.phone,
           message: t('welcomeAtTornado', { email: values.email, password: values.password }),
         })
-      } catch (err) {
-        console.error('Send message error:', err)
-      }
+      } catch (err) {}
       router.push('/signin')
     },
     onError: (err: any) => {
-      console.error('Signup error:', err)
       const errorMessage =
         err?.message || err?.response?.data?.message || t('signupFailed') || 'Signup failed'
       toast.error(errorMessage)
