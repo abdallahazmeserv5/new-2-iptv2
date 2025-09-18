@@ -32,7 +32,7 @@ export default function Plans({ plans }: HeroProps) {
   const [count, setCount] = useState(0)
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
 
-  const slideItems = plans.docs
+  const slideItems = plans.docs.sort((a, b) => a.price - b.price)
 
   useEffect(() => {
     if (!api) {
