@@ -82,7 +82,7 @@ export default function PaymentSuccessPage() {
           </span>
         </p>
 
-        <h3 className="text-lg font-semibold mb-2 text-white">Items:</h3>
+        <h3 className="text-lg font-semibold mb-2 text-white">المشتريات:</h3>
         <ul className="list-disc list-inside text-gray-200">
           {order?.items?.map((item: any, idx: number) => (
             <li key={idx}>

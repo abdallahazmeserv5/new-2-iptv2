@@ -62,6 +62,7 @@ export default function Cart() {
   // Normalize authCart: always use the first cart from docs if present
   const authCart = rawAuthCart?.docs?.at(-1) || rawAuthCart || { items: [] }
 
+  console.log({ authCart })
   // Decide which cart to display
   const cartItems = user?.id ? authCart?.items || [] : guestCartItems || []
 

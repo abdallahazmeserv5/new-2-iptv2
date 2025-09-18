@@ -124,7 +124,7 @@ export default function CartItems({ cartItems, user }: Props) {
       toast.success(t('itemRemoved'))
     } else {
       updateItemQuantity(planId, newQuantity)
-      toast.success('Cart updated')
+      toast.success(t('cartUpdatedSuccessfully'))
     }
   }
 

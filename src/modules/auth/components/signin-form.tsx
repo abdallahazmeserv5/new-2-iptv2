@@ -46,11 +46,17 @@ export default function SigninForm({ isCart }: { isCart?: boolean }) {
     if (guestCartItems.length === 0) return true
 
     try {
+      // Transform guest cart items to match backend expected format
+      const transformedItems = guestCartItems.map((item) => ({
+        planId: item.planId,
+        quantity: item.quantity,
+      }))
+
       // Use baseFetch instead of fetch
       const response = await baseFetch({
         url: '/api/cart/add',
         method: 'POST',
-        body: { items: guestCartItems },
+        body: { items: transformedItems },
       })
 
       if (!response) {
