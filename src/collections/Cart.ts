@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { sendMessage } from '@/actions/need-bot'
+import { isAdmin } from '@/modules/payload/utils'
 
 export const Cart: CollectionConfig = {
   slug: 'carts',
@@ -11,31 +12,48 @@ export const Cart: CollectionConfig = {
     useAsTitle: 'id',
   },
   access: {
-    read: ({ req }) => true,
-    create: ({ req }) => true,
-    update: ({ req }) => true,
-    delete: ({ req }) => true,
+    read: ({ req }) => {
+      if (!req.user) return false
+
+      if (isAdmin({ req })) {
+        return true // full access
+      }
+
+      // normal users can only see their own
+      return {
+        user: { equals: req.user.id },
+      }
+    },
+    create: ({ req }) => {
+      return !!req.user
+    },
+    update: () => true,
+    delete: ({ req }) => {
+      if (!req.user) return false
+
+      if (isAdmin({ req })) {
+        return true
+      }
+
+      return false
+    },
   },
   hooks: {
     afterChange: [
       async ({ doc, previousDoc, operation, req }) => {
-        // Only run on update operations
         if (operation !== 'update') return
 
-        // Check if abandonedNotes has changed and is not empty
         const currentNotes = doc.abandonedNotes
         const previousNotes = previousDoc?.abandonedNotes
 
         if (currentNotes && currentNotes !== previousNotes && currentNotes.trim() !== '') {
           try {
-            // Get the user's phone number
             const user = await req.payload.findByID({
               collection: 'users',
               id: doc.user,
             })
 
             if (user?.phone) {
-              // Send message to the user
               await sendMessage({
                 number: user.phone,
                 message: `مرحباً! 👋\n\nلديك رسالة من فريق الدعم:\n\n${currentNotes}\n\nشكراً لاختيارك خدماتنا! 🛒✨`,
@@ -59,19 +77,12 @@ export const Cart: CollectionConfig = {
           en: 'Your customer left items in their cart 👀. Send them a friendly reminder to complete the purchase 🛒✨',
         },
         condition: (data, siblingData, { user }) => {
-          // Only show to admins
-          if (!user || user.role !== 'admin') {
-            return false
-          }
+          if (!user || user.role !== 'admin') return false
 
-          // Check if cart hasn't been updated for more than 1 hour
           if (siblingData?.updatedAt) {
             const updatedAt = new Date(siblingData.updatedAt)
             const now = new Date()
-
-            const isProduction = process.env.VERCEL_ENV === 'production' ? 1000 : 1
-
-            const oneHourAgo = new Date(now.getTime() - 60 * 60 * isProduction)
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
 
             return updatedAt < oneHourAgo
           }
@@ -85,7 +96,7 @@ export const Cart: CollectionConfig = {
       type: 'relationship',
       relationTo: 'users',
       required: true,
-      unique: true, // one cart per user
+      unique: true,
       label: { en: 'User', ar: 'المستخدم' },
     },
     {

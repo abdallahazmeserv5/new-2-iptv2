@@ -1,7 +1,14 @@
+import { isAdmin } from '@/modules/payload/utils'
 import { CollectionConfig } from 'payload'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
+  access: {
+    create: isAdmin,
+    read: () => true,
+    update: isAdmin,
+    delete: isAdmin,
+  },
   labels: {
     singular: { en: 'Page', ar: 'صفحة' },
     plural: { en: 'Pages', ar: 'صفحات' },

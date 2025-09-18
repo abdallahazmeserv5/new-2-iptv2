@@ -12,8 +12,30 @@ export const Orders: CollectionConfig = {
       return isAdmin({ req }) ? true : { user: { equals: req.user.id } }
     },
     create: ({ req }) => !!req.user,
-    update: ({ req }) => true,
-    delete: isAdmin,
+    update: ({ req }) => {
+      if (!req.user) return false
+
+      if (isAdmin({ req })) {
+        return true // admins can update any order
+      }
+
+      // only the creator (owner) can update their own order
+      return {
+        user: { equals: req.user.id },
+      }
+    },
+    delete: ({ req }) => {
+      if (!req.user) return false
+
+      if (isAdmin({ req })) {
+        return true // admins can update any order
+      }
+
+      // only the creator (owner) can update their own order
+      return {
+        user: { equals: req.user.id },
+      }
+    },
   },
   fields: [
     {

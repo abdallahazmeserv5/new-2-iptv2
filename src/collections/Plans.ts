@@ -8,10 +8,10 @@ export const Plans: CollectionConfig = {
     plural: { en: 'Plans', ar: 'الخطط' },
   },
   access: {
-    create: isAdmin, // only admin can create
-    read: () => true, // everyone can read/query
-    update: () => true, // only admin can update
-    delete: isAdmin, // only admin can delete
+    create: isAdmin,
+    read: () => true,
+    update: isAdmin,
+    delete: isAdmin,
   },
   admin: {
     useAsTitle: 'title',
