@@ -10,21 +10,14 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel'
 import { Separator } from '@/components/ui/separator'
+import AddToCartButtons from '@/modules/shared/components/add-to-cart-buttons'
+import ImageFallBack from '@/modules/shared/components/image-fall-back'
 import SectionHeader from '@/modules/shared/components/section-header'
 import { Media, Plan } from '@/payload-types'
-import { ArrowUpRight } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { PaginatedDocs } from 'payload'
 import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
-import { useQueryClient } from '@tanstack/react-query'
-import ImageFallBack from '@/modules/shared/components/image-fall-back'
-import { useRouter } from 'next/navigation'
-import { baseFetch } from '@/actions/fetch'
-import PrimaryButton from '@/modules/shared/components/primary-button'
-import { useCart } from '@/modules/cart/hooks/use-cart'
-import AddToCartButtons from '@/modules/shared/components/add-to-cart-buttons'
 
 interface HeroProps {
   plans: PaginatedDocs<Plan>
@@ -32,88 +25,7 @@ interface HeroProps {
 
 export default function Plans({ plans }: HeroProps) {
   const lang = useLocale()
-  const queryClient = useQueryClient()
-  const router = useRouter()
   const t = useTranslations('')
-
-  // Use the custom cart hook
-  const { addToCart: addToCartHook } = useCart()
-
-  // Check if user is authenticated
-  const checkUserAuth = async (): Promise<boolean> => {
-    try {
-      const res = await fetch('/api/users/me', {
-        method: 'GET',
-        credentials: 'include',
-      })
-
-      if (res.ok) {
-        const userData = await res.json()
-        return userData && userData.user // Payload v3 returns user data in this format
-      }
-      return false
-    } catch (error) {
-      return false
-    }
-  }
-
-  // Add to cart for authenticated users
-  const addToCartAuth = async (planId: string) => {
-    try {
-      const data = await baseFetch({
-        url: '/api/cart/add',
-        method: 'POST',
-        body: {
-          items: [{ planId, quantity: 1 }], // send as array to match new route
-        },
-      })
-
-      if (!data || data?.error) {
-        toast.error(data?.error || 'Could not add to cart')
-        return
-      }
-
-      // ✅ Refetch cart so UI updates
-      queryClient.refetchQueries({ queryKey: ['/cart', lang] })
-
-      toast.success(t('cartUpdatedSuccessfully'), {
-        duration: 3000,
-      })
-    } catch (err) {
-      toast.error(t('somethingWentWrong'))
-    }
-  }
-
-  // Updated function to use the custom hook
-  const addToLocalStorage = (planId: string) => {
-    try {
-      // Find the plan data to store complete information
-      const selectedPlan = slideItems.find((plan) => plan.id === planId)
-      if (!selectedPlan) {
-        toast.error('Plan not found')
-        return
-      }
-
-      // Use the custom hook instead of manual localStorage management
-      addToCartHook(selectedPlan, 1)
-
-      toast.success(t('addToCartGuestMode'))
-    } catch (err) {
-      toast.error('Could not add to cart')
-    }
-  }
-
-  // Main add to cart function
-  const addToCart = async (planId: string) => {
-    const isAuthenticated = await checkUserAuth()
-
-    if (isAuthenticated) {
-      await addToCartAuth(planId)
-    } else {
-      addToLocalStorage(planId)
-    }
-    router.push('/cart')
-  }
 
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
@@ -241,8 +153,8 @@ export default function Plans({ plans }: HeroProps) {
 
               <div
                 onClick={(e) => {
-                  e.stopPropagation() // stop bubbling to Link
-                  e.preventDefault() // prevent navigation
+                  e.stopPropagation()
+                  e.preventDefault()
                 }}
               >
                 <AddToCartButtons plan={slideItem} />

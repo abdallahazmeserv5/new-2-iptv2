@@ -317,6 +317,14 @@ export interface Cart {
       }[]
     | null;
   updatedAt: string;
+  /**
+   * Timestamp of last abandoned cart reminder message
+   */
+  lastReminderAt?: string | null;
+  /**
+   * Shows when cart has not been updated for more than 1 hour
+   */
+  isAbandoned?: boolean | null;
   createdAt: string;
 }
 /**
@@ -658,6 +666,8 @@ export interface CartsSelect<T extends boolean = true> {
         id?: T;
       };
   updatedAt?: T;
+  lastReminderAt?: T;
+  isAbandoned?: T;
   createdAt?: T;
 }
 /**
@@ -768,12 +778,15 @@ export interface Setting {
         id?: string | null;
       }[]
     | null;
-  abandonAfterMinutes: number;
-  messageIntervalMinutes: number;
+  abandonAfterHours: number;
   /**
    * Enter WhatsApp number with country code (e.g., +966501234567)
    */
   whatsappNumber?: string | null;
+  /**
+   * Enter WhatsApp Admin number with country code (e.g., +966501234567)
+   */
+  adminWhatsApp?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -804,9 +817,9 @@ export interface SettingsSelect<T extends boolean = true> {
         socialMediaImage?: T;
         id?: T;
       };
-  abandonAfterMinutes?: T;
-  messageIntervalMinutes?: T;
+  abandonAfterHours?: T;
   whatsappNumber?: T;
+  adminWhatsApp?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

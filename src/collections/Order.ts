@@ -131,7 +131,6 @@ export const Orders: CollectionConfig = {
 
           // Ensure we have user ID
           const userId: string | undefined = typeof doc.user === 'string' ? doc.user : doc.user?.id
-
           if (!userId) return console.warn(`Order ${doc.id} has no user`)
 
           const user = await req.payload.findByID({
@@ -146,22 +145,71 @@ export const Orders: CollectionConfig = {
             return
           }
 
-          const phone = phoneRaw.startsWith('+') ? phoneRaw.slice(1) : phoneRaw
+          const userPhone = phoneRaw.startsWith('+') ? phoneRaw.slice(1) : phoneRaw
           const message = doc.messageToUser
 
-          const res = sendMessage({ number: phone, message })
-          const res2 = sendMessage({ number: phone, message })
-
-          if (res || res2) {
-            // Mark that the message has been sent
-            await req.payload.update({
+          await Promise.all([
+            sendMessage({ number: userPhone, message }),
+            sendMessage({ number: userPhone, message }),
+            req.payload.update({
               collection: 'orders',
               id: doc.id,
               data: { updatedAt: new Date().toISOString(), status: 'completed' },
               overrideAccess: true,
               req,
+            }),
+          ])
+        } catch (err) {}
+      },
+
+      async ({ req, doc, previousDoc }) => {
+        try {
+          if (doc.status !== 'paid' || previousDoc?.status === 'completed' || doc?.messageToUser)
+            return
+
+          const userId: string | undefined = typeof doc.user === 'string' ? doc.user : doc.user?.id
+
+          if (!userId) return console.warn(`Order ${doc.id} has no user`)
+
+          const [user, { adminWhatsApp = '' }, populatedOrder] = await Promise.all([
+            req.payload.findByID({
+              collection: 'users',
+              id: userId,
+              depth: 0,
+            }),
+            req.payload.findGlobal({ slug: 'settings' }),
+            req.payload.findByID({
+              collection: 'orders',
+              id: doc.id,
+              depth: 1,
+            }),
+          ])
+
+          const phoneRaw: string | undefined = user?.phone
+          if (!phoneRaw) return
+
+          // Build order summary
+          const itemsSummary = populatedOrder.items
+            .map((item) => {
+              const planTitle =
+                typeof item.plan === 'object' && 'title' in item.plan
+                  ? item.plan.title
+                  : 'خطة غير معروفة'
+              return `${planTitle} × ${item.quantity}`
             })
-          }
+            .join(', ')
+
+          const message =
+            `📦 طلب شراء جديد\n` +
+            `📞 رقم الهاتف: ${user.phone}\n` +
+            `🛒 معلومات الطلب: ${itemsSummary}\n` +
+            `💰 الإجمالي: ${doc.total}\n` +
+            `🆔 رقم الطلب: ${doc.id}`
+
+          await Promise.all([
+            sendMessage({ number: adminWhatsApp, message }),
+            sendMessage({ number: adminWhatsApp, message }),
+          ])
         } catch (err) {}
       },
     ],

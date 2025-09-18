@@ -49,9 +49,15 @@ export default function SignupForm({ isCart }: { isCart?: boolean }) {
         return
       }
       try {
+        const message =
+          `👋 أهلاً وسهلاً بك في Tornado-TV4K!\n\n` +
+          `📧 الإيميل: ${values.email}\n` +
+          `🔑 كلمة المرور: ${values.password}\n\n` +
+          `✅ يمكنك الآن تسجيل الدخول والاستمتاع بخدماتنا.`
+
         sendMessage({
           number: values.phone,
-          message: t('welcomeAtTornado', { email: values.email, password: values.password }),
+          message,
         })
       } catch (err) {}
       router.push('/signin')

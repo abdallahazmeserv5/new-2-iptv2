@@ -32,7 +32,6 @@ export const Users: CollectionConfig = {
       label: { en: 'Phone Number', ar: 'رقم الهاتف' },
       type: 'text',
       required: true,
-      unique: true,
     },
     {
       name: 'role',

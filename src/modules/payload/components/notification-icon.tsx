@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Bell, ShoppingBag, Clock, ExternalLink } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -96,7 +97,7 @@ export function NotificationIcon() {
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 px-4 py-3 border-b border-border">
           <DropdownMenuLabel className="text-base font-semibold text-foreground flex items-center gap-2">
             <ShoppingBag size={18} className="text-primary" />
-            Recent Orders ({count})
+            اخر الطلبات ({count})
           </DropdownMenuLabel>
         </div>
 
@@ -105,7 +106,7 @@ export function NotificationIcon() {
             /* Enhanced loading state */
             <div className="p-6 text-center bg-background/95 backdrop-blur-sm">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-3"></div>
-              <p className="text-muted-foreground text-sm">Loading orders...</p>
+              <p className="text-muted-foreground text-sm">جاري تحميل الطلبات...</p>
             </div>
           ) : orders.length > 0 ? (
             orders.slice(0, 10).map((order, index) => (
@@ -122,10 +123,10 @@ export function NotificationIcon() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-semibold text-foreground">
-                          Order #{order.id.slice(-8)}
+                          الطلب #{order.id.slice(-8)}
                         </span>
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                          Paid
+                          مدفوعة
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -147,14 +148,7 @@ export function NotificationIcon() {
                         key={idx}
                         className="flex items-center gap-3 p-2 bg-muted/50 rounded-lg backdrop-blur-sm"
                       >
-                        {item.plan.image?.filename && (
-                          <img
-                            src={`${process.env.NEXT_PUBLIC_PAYLOAD_SERVER_URL}/media/${item.plan.image.filename}`}
-                            alt={item.plan.image.alt || item.plan.title}
-                            className="w-10 h-10 object-cover rounded-md border border-border"
-                          />
-                        )}
-                        <div className="flex-1 min-w-0">
+                        {/* <div className="flex-1 min-w-0">
                           <div className="font-medium text-sm text-foreground truncate">
                             {item.plan.title}
                           </div>
@@ -163,12 +157,14 @@ export function NotificationIcon() {
                               {item.plan.description}
                             </div>
                           )}
-                        </div>
+                        </div> */}
                         <div className="text-right">
                           <div className="text-sm font-semibold text-foreground">
                             ${item.price.toFixed(2)}
                           </div>
-                          <div className="text-xs text-muted-foreground">Qty: {item.quantity}</div>
+                          <div className="text-xs text-muted-foreground">
+                            الكمية: {item.quantity}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -182,10 +178,10 @@ export function NotificationIcon() {
               <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <ShoppingBag size={24} className="text-muted-foreground" />
               </div>
-              <p className="text-muted-foreground text-sm font-medium mb-1">No paid orders yet</p>
-              <p className="text-muted-foreground text-xs">
-                Orders will appear here once they're paid
+              <p className="text-muted-foreground text-sm font-medium mb-1">
+                لا يوجد طلبات مدفوعة بعد
               </p>
+              <p className="text-muted-foreground text-xs">ستظهر الطلبات عندما يتم دفعها</p>
             </div>
           )}
         </div>
@@ -200,7 +196,7 @@ export function NotificationIcon() {
                 href="/admin/collections/orders?limit=0&where[status][equals]=paid&sort=-createdAt"
                 className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 cursor-pointer"
               >
-                View all orders
+                عرض كل الطلبات
                 <ExternalLink size={14} />
               </Link>
             </DropdownMenuItem>

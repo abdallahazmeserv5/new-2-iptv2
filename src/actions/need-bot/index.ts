@@ -30,6 +30,8 @@ export async function sendMessage({
         return res
       }
 
+      console.log({ res })
+
       // wait 200ms before retrying
       if (attempt < retries) {
         await new Promise((resolve) => setTimeout(resolve, 200))

@@ -78,20 +78,23 @@ export async function POST(req: Request) {
       })
     }
 
-    // 6) Send message using sendMessage helper
     const phone = phoneRaw.startsWith('+') ? phoneRaw.slice(1) : phoneRaw
 
     const itemsSummary = (order.items || [])
       .map((it: any) => `${it.plan?.title ?? it.plan} x${it.quantity}`)
       .join(', ')
 
-    const message = `شكرًا لك تم الشراء بنجاح رقم الطلب الخاص بك${order.id} يمكنك الدخول علي الموقع وتقييم الخدمة`
+    const message =
+      `شكرًا لك 🎉 تم الشراء بنجاح\n` +
+      `رقم الطلب الخاص بك: ${order.id}\n\n` +
+      `يمكنك الدخول على الموقع وتقييم الخدمة ✨` +
+      `https://tornado-tv4k.com/cart`
 
     await sendMessage({ number: phone, message })
     sendMessage({ number: phone, message })
 
     return NextResponse.json({ success: true, order })
   } catch (err) {
-     return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }

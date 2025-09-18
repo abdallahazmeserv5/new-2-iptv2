@@ -54,5 +54,37 @@ export const Cart: CollectionConfig = {
         beforeChange: [() => new Date()],
       },
     },
+    {
+      name: 'lastReminderAt',
+      type: 'date',
+      label: { en: 'Last Reminder At', ar: 'تاريخ آخر تذكير' },
+      admin: { description: 'Timestamp of last abandoned cart reminder message' },
+    },
+    {
+      name: 'isAbandoned',
+      type: 'checkbox',
+      label: { en: 'Abandoned Cart', ar: 'سلة مهجورة' },
+      admin: {
+        description: 'Shows when cart has not been updated for more than 1 hour',
+        condition: (data, siblingData, { user }) => {
+          // Only show to admins
+          if (!user || user.role !== 'admin') {
+            return false
+          }
+
+          // Check if cart hasn't been updated for more than 1 hour
+          if (siblingData?.updatedAt) {
+            const updatedAt = new Date(siblingData.updatedAt)
+            const now = new Date()
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
+
+            return updatedAt < oneHourAgo
+          }
+
+          return false
+        },
+      },
+      defaultValue: false,
+    },
   ],
 }

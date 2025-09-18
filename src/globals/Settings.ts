@@ -53,23 +53,13 @@ export const Settings: GlobalConfig = {
 
     // message time
     {
-      name: 'abandonAfterMinutes',
+      name: 'abandonAfterHours',
       type: 'number',
       required: true,
-      defaultValue: 60, // 1 hour
+      defaultValue: 1,
       label: {
-        en: 'Minutes before cart is abandoned',
-        ar: 'عدد الدقايق قبل اعتبار السلة مهجورة',
-      },
-    },
-    {
-      name: 'messageIntervalMinutes',
-      type: 'number',
-      required: true,
-      defaultValue: 60, // send again every 1 hour
-      label: {
-        en: 'Minutes between sending messages',
-        ar: 'عدد الدقايق بين إرسال الرسائل',
+        en: 'Hours before cart is abandoned',
+        ar: 'عدد الساعات قبل اعتبار السلة مهجورة',
       },
     },
 
@@ -86,6 +76,22 @@ export const Settings: GlobalConfig = {
         description: {
           en: 'Enter WhatsApp number with country code (e.g., +966501234567)',
           ar: 'أدخل رقم الواتساب مع رمز الدولة (مثال: +966501234567)',
+        },
+      },
+    },
+    // WhatsApp configuration admin
+    {
+      name: 'adminWhatsApp',
+      type: 'text',
+      defaultValue: '',
+      label: {
+        en: 'WhatsApp Number Admin',
+        ar: 'رقم الواتساب الأدمن',
+      },
+      admin: {
+        description: {
+          en: 'Enter WhatsApp Admin number with country code (e.g., +966501234567)',
+          ar: 'أدخل رقم الواتساب الأدمن مع رمز الدولة (مثال: +966501234567)',
         },
       },
     },
