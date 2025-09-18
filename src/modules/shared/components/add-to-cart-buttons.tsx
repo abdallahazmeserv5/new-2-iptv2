@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useUser } from '../hooks/use-user'
 import PrimaryButton from './primary-button'
+import { useState } from 'react'
 
 export default function AddToCartButtons({ plan }: { plan: Plan }) {
   const { user } = useUser()
@@ -17,6 +18,7 @@ export default function AddToCartButtons({ plan }: { plan: Plan }) {
   const queryClient = useQueryClient()
   const router = useRouter()
   const t = useTranslations()
+  const [sending, setIsSending] = useState(false)
   // Use the custom cart hook
   const { addToCart: addToCartHook } = useCart()
 
@@ -62,12 +64,16 @@ export default function AddToCartButtons({ plan }: { plan: Plan }) {
   const addToCart = async (planId: string) => {
     let success = false
 
+    setIsSending(true)
+
     if (!!user) {
       success = await addToCartAuth(planId)
     } else {
       addToLocalStorage(planId)
       success = true // Local storage operations are synchronous
     }
+
+    setIsSending(false)
 
     // Only navigate to cart if the operation was successful
     if (success) {
@@ -79,6 +85,7 @@ export default function AddToCartButtons({ plan }: { plan: Plan }) {
     <PrimaryButton
       className="flex gap-2 items-center justify-center !py-2"
       onClick={() => addToCart(plan.id)}
+      disabled={sending}
     >
       <ArrowUpRight className="text-[#9EFF3E] " />
       {t('subscripe')}

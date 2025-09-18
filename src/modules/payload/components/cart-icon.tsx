@@ -19,7 +19,6 @@ export function CartIcon() {
 
   useEffect(() => {
     const isProduction = process.env.VERCEL_ENV === 'production' ? 1000 : 1
-    console.log({ isProduction })
     // Send reminders every minute (60 seconds)
     const reminderInterval = setInterval(sendReminders, isProduction ? 60000 : 60)
 
@@ -27,6 +26,8 @@ export function CartIcon() {
       clearInterval(reminderInterval)
     }
   }, [])
+
+  const isProduction = process.env.VERCEL_ENV === 'production' ? 1000 : 1
 
   return (
     <div className="card" style={{ padding: '1rem', marginBottom: '1rem' }}>
@@ -40,7 +41,7 @@ export function CartIcon() {
 
       <div style={{ marginTop: '0.5rem' }}>
         <Link
-          href={`/admin/collections/carts?where[updatedAt][less_than]=${new Date(Date.now() - 60 * 60 * 1000).toISOString()}`}
+          href={`/admin/collections/carts?where[updatedAt][less_than]=${new Date(Date.now() - 60 * 60 * isProduction).toISOString()}`}
           className="hover:text-primary"
         >
           <button

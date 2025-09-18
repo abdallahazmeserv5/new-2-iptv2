@@ -93,7 +93,7 @@ export function NotificationIcon() {
         </div>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-96 bg-card border border-border shadow-xl rounded-xl p-0 overflow-hidden z-[9999]">
+      <DropdownMenuContent className="w-96 bg-black/80 border border-border shadow-xl rounded-xl p-0 overflow-hidden z-[9999]">
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 px-4 py-3 border-b border-border">
           <DropdownMenuLabel className="text-base font-semibold text-foreground flex items-center gap-2">
             <ShoppingBag size={18} className="text-primary" />

@@ -308,6 +308,10 @@ export interface Faq {
  */
 export interface Cart {
   id: string;
+  /**
+   * Your customer left items in their cart 👀. Send them a friendly reminder to complete the purchase 🛒✨
+   */
+  abandonedNotes?: string | null;
   user: string | User;
   items?:
     | {
@@ -321,10 +325,6 @@ export interface Cart {
    * Timestamp of last abandoned cart reminder message
    */
   lastReminderAt?: string | null;
-  /**
-   * Shows when cart has not been updated for more than 1 hour
-   */
-  isAbandoned?: boolean | null;
   createdAt: string;
 }
 /**
@@ -657,6 +657,7 @@ export interface FaqSelect<T extends boolean = true> {
  * via the `definition` "carts_select".
  */
 export interface CartsSelect<T extends boolean = true> {
+  abandonedNotes?: T;
   user?: T;
   items?:
     | T
@@ -667,7 +668,6 @@ export interface CartsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   lastReminderAt?: T;
-  isAbandoned?: T;
   createdAt?: T;
 }
 /**

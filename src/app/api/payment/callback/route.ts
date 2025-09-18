@@ -88,7 +88,7 @@ export async function POST(req: Request) {
       `شكرًا لك 🎉 تم الشراء بنجاح\n` +
       `رقم الطلب الخاص بك: ${order.id}\n\n` +
       `يمكنك الدخول على الموقع وتقييم الخدمة ✨` +
-      `https://tornado-tv4k.com/cart`
+      `https://tornado-tv4k.com`
 
     await sendMessage({ number: phone, message })
     sendMessage({ number: phone, message })

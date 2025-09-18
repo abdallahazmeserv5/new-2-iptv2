@@ -6,14 +6,10 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export async function POST() {
   try {
-    console.log('im runnning')
     const payload = await configuredPayload()
     const { abandonAfterHours = 1 } = await payload.findGlobal({ slug: 'settings' })
-    console.log({ abandonAfterHours })
 
     const isProduction = process.env.VERCEL_ENV === 'production' ? 1000 : 1
-
-    console.log({ abandonAfterHours })
 
     const abondentTime = new Date(
       Date.now() - abandonAfterHours * 60 * 60 * isProduction,
@@ -32,11 +28,7 @@ export async function POST() {
       limit: 100,
     })
 
-    console.log({ carts })
-
     const docs = carts?.docs || []
-
-    console.log({ docs })
 
     for (let i = 0; i < docs.length; i++) {
       const cart: any = docs[i]
@@ -57,15 +49,12 @@ export async function POST() {
           },
           limit: 1,
         })
-        console.log({ orders }, JSON.stringify(orders, null, 2), { length: orders?.docs?.length })
       } catch {}
-      console.log('last', cart.lastReminderAt)
 
       // Double-check dedupe
       if (cart.lastReminderAt) continue
 
       const phone = (cart.user as any)?.phone
-      console.log({ phone })
       if (!phone) continue
 
       const message =
