@@ -10,6 +10,7 @@ import React from 'react'
 import Providers from './providers'
 import './styles.css'
 import WhatsAppFab from '@/modules/shared/components/whatsapp-fab'
+import Head from 'next/head'
 
 export const revalidate = 30
 
@@ -48,6 +49,23 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (
     <html lang={lang} dir={dir} className="scroll-smooth">
+      <Head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function()
+              {a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
+              a.queue=[];var s='script',r=t.createElement(s);r.async=!0;
+              r.src=n;var u=t.getElementsByTagName(s)[0];
+              u.parentNode.insertBefore(r,u);})(window,document,
+              'https://sc-static.net/scevent.min.js');
+
+              snaptr('init', 'a1d1c493-987e-400e-b189-21707e47918e', {});
+              snaptr('track', 'PAGE_VIEW');
+            `,
+          }}
+        />
+      </Head>
       <Providers>
         <NextIntlClientProvider>
           <HydrationBoundary state={dehydrate(queryClient)}>
