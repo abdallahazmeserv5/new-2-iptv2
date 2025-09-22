@@ -50,13 +50,12 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   return (
     <html lang={lang} dir={dir} className="scroll-smooth">
-      <Head>
-        <PixelScript />
-      </Head>
       <Providers>
         <NextIntlClientProvider>
           <HydrationBoundary state={dehydrate(queryClient)}>
             <body className="min-h-screen flex flex-col">
+              <PixelScript />
+
               <Navbar settings={settings} pages={pages} />
               <main className="flex-1"> {children}</main>
               <Footer settings={settings} pages={pages} />
