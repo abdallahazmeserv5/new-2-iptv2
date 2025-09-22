@@ -5,6 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 import ImageFallBack from './image-fall-back'
 import { PaginatedDocs } from 'payload'
+import PixelScript from '@/scripts/pixel-script'
 
 interface Props {
   settings: Setting

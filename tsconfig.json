@@ -31,7 +31,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.js",
-    "src/collections/PaymentMethods.seed.ts"
+    "src/collections/PaymentMethods.seed.ts",
+    "src/scripts/pixel-script.jsx"
   ],
   "exclude": ["node_modules"]
 }
