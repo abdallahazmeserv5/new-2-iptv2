@@ -11,6 +11,8 @@ import Providers from './providers'
 import './styles.css'
 import WhatsAppFab from '@/modules/shared/components/whatsapp-fab'
 
+export const revalidate = 30
+
 export const metadata = {
   description: 'Best site to watch the latest movies.',
   title: 'Tornado 4K',

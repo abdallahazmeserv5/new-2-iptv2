@@ -29,6 +29,7 @@ export async function baseFetch({
           'Accept-Language': lang,
           ...headers,
         },
+        cache: 'no-store',
         credentials,
         body: body ? JSON.stringify(body) : undefined,
         ...rest,

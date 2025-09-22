@@ -9,10 +9,12 @@ import Plans from '@/modules/home/components/plans'
 import SubscriptionSteps from '@/modules/home/components/subscription-steps'
 import TestimonialSection from '@/modules/home/components/testimonial-section'
 
+export const revalidate = 30
+
 export default async function HomePage() {
   const payload = await configuredPayload()
 
-  const [heroSection, packages, plans, testimonial, banners, faqs, features] = await Promise.all([
+  const [heroSection, packages, plans, banners, faqs, features] = await Promise.all([
     payload.find({
       collection: 'hero-slides',
     }),
@@ -22,9 +24,7 @@ export default async function HomePage() {
     payload.find({
       collection: 'plans',
     }),
-    payload.find({
-      collection: 'testimonial',
-    }),
+
     payload.find({
       collection: 'banners',
     }),
@@ -44,7 +44,7 @@ export default async function HomePage() {
       <Plans plans={plans} />
       <Packages packages={packages} />
       <Features features={features} />
-      <TestimonialSection testimonial={testimonial} />
+      <TestimonialSection plans={plans} />
       <Banners banners={banners} />
       <Faq faqs={faqs} />
     </main>

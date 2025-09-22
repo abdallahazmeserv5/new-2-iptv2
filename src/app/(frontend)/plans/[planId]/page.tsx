@@ -9,6 +9,8 @@ interface Props {
   params: Promise<{ planId: string }>
 }
 
+export const revalidate = 30
+
 export default async function page({ params }: Props) {
   const { planId } = await params
   const t = await getTranslations()

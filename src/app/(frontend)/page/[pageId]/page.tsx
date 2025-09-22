@@ -7,6 +7,9 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 interface Props {
   params: Promise<{ pageId: string }>
 }
+
+export const revalidate = 30
+
 export default async function HomePage({ params }: Props) {
   const { pageId } = await params
   const payload = await configuredPayload()
