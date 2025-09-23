@@ -25,6 +25,7 @@ import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e0
 import { Logo as Logo_01164940cd6a63eee7772f625b9c459c } from 'src/modules/payload/components/logo'
 import { NotificationIcon as NotificationIcon_8d6c17eca93abc87297b1a6a0b070919 } from 'src/modules/payload/components/notification-icon'
 import { CartIcon as CartIcon_a2040ea97eaa01e747ca17755d4037ab } from 'src/modules/payload/components/cart-icon'
+import { Statistics as Statistics_89e6f121fb0e0b596a60990efaa86803 } from 'src/modules/payload/components/statistics'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
 export const importMap = {
@@ -55,5 +56,6 @@ export const importMap = {
   "src/modules/payload/components/logo#Logo": Logo_01164940cd6a63eee7772f625b9c459c,
   "src/modules/payload/components/notification-icon#NotificationIcon": NotificationIcon_8d6c17eca93abc87297b1a6a0b070919,
   "src/modules/payload/components/cart-icon#CartIcon": CartIcon_a2040ea97eaa01e747ca17755d4037ab,
+  "src/modules/payload/components/statistics#Statistics": Statistics_89e6f121fb0e0b596a60990efaa86803,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e
 }

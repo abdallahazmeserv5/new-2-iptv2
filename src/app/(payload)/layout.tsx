@@ -9,6 +9,7 @@ import React from 'react'
 import { importMap } from './admin/importMap.js'
 import './custom.scss'
 import '@/styles/payload-styles.css'
+import { NextIntlClientProvider } from 'next-intl'
 
 type Args = {
   children: React.ReactNode
@@ -25,7 +26,7 @@ const serverFunction: ServerFunctionClient = async function (args) {
 
 const Layout = ({ children }: Args) => (
   <RootLayout config={config} importMap={importMap} serverFunction={serverFunction}>
-    {children}
+    <NextIntlClientProvider>{children}</NextIntlClientProvider>
   </RootLayout>
 )
 

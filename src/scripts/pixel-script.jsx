@@ -24,7 +24,6 @@ export const initializeSnapPixel = (snapPixelId) => {
 // React component that auto-initializesa
 export default function PixelScript() {
   useEffect(() => {
-    console.log('i got called')
     initializeSnapPixel('a1d1c493-987e-400e-b189-21707e47918e')
   }, [])
 

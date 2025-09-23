@@ -103,5 +103,34 @@
   "designedBy": "Designed and Programmed by Serv5. All rights reserved.",
   "madeWithLove": "Made with love by Tornado-TV4k.",
   "subscripe": "Buy now",
-  "itemAddedToCart": "Item got added to cart"
+  "itemAddedToCart": "Item got added to cart",
+  "general": {
+    "save": "Save"
+  },
+  "dashboard": {
+    "orders": {
+      "total": "Total Orders",
+      "totalDesc": "All orders ever placed",
+      "today": "Today",
+      "todayDesc": "Orders placed today",
+      "week": "This Week",
+      "weekDesc": "Orders placed this week",
+      "month": "This Month",
+      "monthDesc": "Orders placed this month",
+      "yesterday": "Yesterday",
+      "statistics": "Order statistics"
+    },
+    "users": {
+      "statistics": "User Statistics",
+      "total": "Total Users",
+      "totalDesc": "All registered users",
+      "today": "Today",
+      "todayDesc": "Users registered today",
+      "week": "This Week",
+      "weekDesc": "Users registered this week",
+      "month": "This Month",
+      "monthDesc": "Users registered this month",
+      "yesterday": "Yesterday"
+    }
+  }
 }

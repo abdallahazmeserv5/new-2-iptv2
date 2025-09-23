@@ -1,3 +1,4 @@
+import { isAdmin } from '@/modules/payload/utils'
 import { GlobalConfig } from 'payload'
 
 export const PrivateData: GlobalConfig = {
@@ -7,8 +8,8 @@ export const PrivateData: GlobalConfig = {
     ar: 'البيانات الخاصة',
   },
   access: {
-    read: () => true,
-    update: () => true,
+    read: isAdmin,
+    update: isAdmin,
   },
   fields: [
     {
