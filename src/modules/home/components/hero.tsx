@@ -62,7 +62,7 @@ export default function Hero({ heroSection }: HeroProps) {
             const mainImg = slideItem.mainImage as Media
             const [first, rest] = slideItem.title?.split(' ', 2) || []
             return (
-              <CarouselItem key={index} className=" w-full h-full ">
+              <CarouselItem key={index} className=" w-full h-full !pl-0">
                 {/* website and laptop */}
                 <div className="relative w-full h-full">
                   {/* Laptop template */}

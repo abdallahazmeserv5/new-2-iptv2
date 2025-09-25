@@ -92,7 +92,7 @@ export default function TestimonialSection({ plans }: Props) {
   }
 
   return (
-    <section className="flex flex-col gap-3 sm:gap-5 bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white w-full overflow-hidden">
+    <section className="flex flex-col gap-3 sm:gap-5 bg-[#151515] p-3 sm:p-8 lg:p-10 rounded-2xl border border-[#262626] text-white w-full overflow-hidden mt-6">
       <div className="flex items-center justify-between">
         <h3 className="font-bold">{t('testimonials')}</h3>
       </div>

@@ -122,14 +122,14 @@ export default function Plans({ plans }: HeroProps) {
         </Carousel>
       </section>
 
-      <section className="grid grid-cols-2  gap-2 md:hidden" id="plans">
+      <section className="grid grid-cols-2 gap-2 md:hidden justify-items-center" id="plans">
         {slideItems?.map((slideItem, index) => {
           const img = slideItem.image as Media
           return (
             <Link
               href={`/plans/${slideItem.id}`}
               key={index}
-              className="basis-[270px] shrink-0 h-full bg-[#262626] p-2 sm:p-8 items-center rounded-2xl me-5 group cursor-pointer flex flex-col gap-2"
+              className="basis-[270px] shrink-0 h-full bg-[#262626] p-2 sm:p-8 rounded-2xl group cursor-pointer flex flex-col items-center gap-2"
             >
               <ImageFallBack
                 alt={img?.alt}
