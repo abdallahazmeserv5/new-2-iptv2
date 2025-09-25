@@ -64,8 +64,8 @@ export default function Banners({ banners }: Props) {
           {slideItems?.map((slideItem, index) => {
             const mainImg = slideItem.image as Media
             return (
-              <CarouselItem key={index} className="w-full h-64 lg:h-80  ">
-                <div className="relative w-full h-full">
+              <CarouselItem key={index} className="w-full h-64 lg:h-80  !pl-0">
+                <div className="relative w-full h-full ">
                   <ImageFallBack
                     alt={mainImg?.alt || 'Website preview'}
                     src={mainImg?.url || ''}
