@@ -14,7 +14,7 @@ export const revalidate = 30
 export default async function HomePage() {
   const payload = await configuredPayload()
 
-  const [heroSection, packages, plans, banners, faqs, features] = await Promise.all([
+  const [heroSection, packages, plans, banners, faqs, features, steps] = await Promise.all([
     payload.find({
       collection: 'hero-slides',
     }),
@@ -34,13 +34,17 @@ export default async function HomePage() {
     payload.find({
       collection: 'features',
     }),
+    payload.find({
+      collection: 'steps',
+      pagination: false,
+    }),
   ])
 
   const x = await getMyFatoorahKey()
   return (
     <main className="flex flex-col gap-10 lg:gap-16 ">
       <Hero heroSection={heroSection} />
-      <SubscriptionSteps />
+      <SubscriptionSteps steps={steps?.docs} />
       <Plans plans={plans} />
       <Packages packages={packages} />
       <Features features={features} />

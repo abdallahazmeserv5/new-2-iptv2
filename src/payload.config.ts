@@ -25,6 +25,7 @@ import { Users } from './collections/Users'
 import { Pages } from './collections/Pages'
 import { PaymentMethods } from './collections/PaymentMethods'
 import { Features } from './collections/Features'
+import { Steps } from './collections/Steps'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -80,6 +81,7 @@ export default buildConfig({
     Pages,
     PaymentMethods,
     Features,
+    Steps,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

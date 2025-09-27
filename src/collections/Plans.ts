@@ -52,6 +52,13 @@ export const Plans: CollectionConfig = {
       label: { en: 'Plan Image', ar: 'صورة الخطة' },
     },
     {
+      name: 'bannerImage',
+      type: 'upload',
+      relationTo: 'media',
+      localized: true,
+      label: { en: 'Banner Image', ar: 'صورة البنر' },
+    },
+    {
       name: 'description',
       type: 'textarea',
       required: true,

@@ -45,7 +45,7 @@ export default function Banners({ banners }: Props) {
   }, [api])
 
   return (
-    <section className="container mx-auto px-4 my-7">
+    <section className="container mx-auto px-4 my-7 mb-16">
       <Carousel
         plugins={[
           Autoplay({

@@ -2,8 +2,10 @@ import { configuredPayload } from '@/actions'
 import Banners from '@/modules/home/components/banners'
 import PlanDetails from '@/modules/palns/components/plan-details'
 import BreadCrumb from '@/modules/shared/components/bread-crumb'
+import { Media } from '@/payload-types'
 import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import { isImage } from 'payload/shared'
 
 interface Props {
   params: Promise<{ planId: string }>
@@ -30,11 +32,11 @@ export default async function page({ params }: Props) {
   if (!planDetails) {
     return notFound()
   }
-
+  const bannerImage = planDetails?.bannerImage as Media
   return (
     <main className="bg-black flex flex-col gap-5 lg:gap-10 pt-5">
       <BreadCrumb
-        image={'/bread-crumb-image.webp'}
+        image={bannerImage?.url || '/bread-crumb-image.webp'}
         links={[
           {
             text: planDetails.title || t('plan'),

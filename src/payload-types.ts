@@ -80,6 +80,7 @@ export interface Config {
     pages: Page;
     'payment-methods': PaymentMethod;
     features: Feature;
+    steps: Step;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -99,6 +100,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     'payment-methods': PaymentMethodsSelect<false> | PaymentMethodsSelect<true>;
     features: FeaturesSelect<false> | FeaturesSelect<true>;
+    steps: StepsSelect<false> | StepsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -223,6 +225,7 @@ export interface Plan {
   price: number;
   priceBeforeDiscount?: number | null;
   image: string | Media;
+  bannerImage?: (string | null) | Media;
   description: string;
   numberOfSubscriptions: number;
   features: {
@@ -417,6 +420,17 @@ export interface Feature {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "steps".
+ */
+export interface Step {
+  id: string;
+  image: string | Media;
+  title: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -473,6 +487,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'features';
         value: string | Feature;
+      } | null)
+    | ({
+        relationTo: 'steps';
+        value: string | Step;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -589,6 +607,7 @@ export interface PlansSelect<T extends boolean = true> {
   price?: T;
   priceBeforeDiscount?: T;
   image?: T;
+  bannerImage?: T;
   description?: T;
   numberOfSubscriptions?: T;
   features?:
@@ -726,6 +745,16 @@ export interface PaymentMethodsSelect<T extends boolean = true> {
  * via the `definition` "features_select".
  */
 export interface FeaturesSelect<T extends boolean = true> {
+  image?: T;
+  title?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "steps_select".
+ */
+export interface StepsSelect<T extends boolean = true> {
   image?: T;
   title?: T;
   updatedAt?: T;

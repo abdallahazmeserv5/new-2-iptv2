@@ -13,7 +13,7 @@ interface Props {
 export default async function PlanDetails({ planDetails }: Props) {
   const img = planDetails.image as Media
   return (
-    <section className="container mx-auto px-4 flex flex-col md:flex-row gap-5">
+    <section className="container mx-auto px-4 flex flex-col md:flex-row gap-5  ">
       <div className="w-full md:w-[350px] lg:w-[400px] space-y-5">
         <PlanPrice
           img={img.url || ''}
